@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "jockey";
+    src: local("Jockey_One"), url("./fonts/Jockey_One/JockeyOne-Regular.ttf") format("truetype");
+}
+@font-face {
+    font-family: "jetbrains_italic";
+    src: local("JetBrains_Mono"), url("./fonts/JetBrains_Mono/JetBrainsMono-Italic-VariableFont_wght.ttf") format("truetype");
+}
+@font-face {
+    font-family: "jetbrains_valiable";
+    src: local("JetBrains_Mono"), url("./fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Kumbh_Sans_Regular";
+    src: local("Kumbh_Sans"), url("./fonts/Kumbh_Sans/static/KumbhSans-Regular.ttf") format("truetype");
+}

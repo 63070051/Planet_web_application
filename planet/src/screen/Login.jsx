@@ -3,8 +3,8 @@ import Logo from "../assets/logo.svg";
 import Background from "../assets/background_logo.svg";
 import { Link } from "react-router-dom";
 function Login(props) {
-    return (
-        <div style={{ backgroundColor: "#FBF7F0" }} className="flex">
+  return (
+    <div style={{ backgroundColor: "#FBF7F0" }} className="flex">
       <div className="w-full sm:w-1/2 flex justify-center items-center relative min-h-screen">
         <div>
           <div className="flex justify-center">
@@ -48,15 +48,19 @@ function Login(props) {
                 >
                   LOGIN
                 </button>
-                <p className="text-gray-400 text-sm text-center duration-500 hover:text-red-600">
-                  Forgot your password ?
-                </p>
+                <div className="flex justify-center items-center">
+                  <Link className="text-gray-400 text-sm text-center duration-500 hover:text-red-600">
+                    Forgot your password ?
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
           <p className="text-sm mt-24 text-center">
             Don’t have an account?{" "}
-            <Link to="/Signup" style={{ color: "#E5725D" }}>SIGN UP</Link>
+            <Link to="/Signup" style={{ color: "#E5725D" }}>
+              SIGN UP
+            </Link>
           </p>
         </div>
       </div>
@@ -69,7 +73,7 @@ function Login(props) {
         }}
       ></div>
     </div>
-    )
+  );
 }
 
 export default Login;
