@@ -4,21 +4,63 @@ import Background from "../assets/background_logo.svg";
 import { Link } from "react-router-dom";
 function Signup(props) {
   return (
-    <div style={{ backgroundColor: "#FBF7F0" }} className="flex">
-      <div className="w-full sm:w-1/2 flex justify-center items-center relative min-h-screen">
+    <div style={{ backgroundColor: "#FBF7F0" }} className="flex justify-between">
+      <div className="w-full sm:w-2/3 flex justify-center items-center relative min-h-screen">
         <div>
-          <div className="flex justify-center">
-            <img className="w-24 mb-6" src={Logo} alt="" srcSet="" />
+          <div className="flex">
+            <img className="w-20 mb-3" src={Logo} alt="" srcSet="" />
           </div>
-          <div className="space-y-12 w-72">
-            <p className="text-3xl font-bold text-center">Sign Up to Planet</p>
-            <div className="space-y-6">
+          <div className="space-y-8 w-72">
+            <p className="text-3xl font-bold">Sign Up</p>
+            <div className="space-y-3">
               <div>
                 <label
                   className="block text-gray-400 text-sm mb-2"
                   htmlFor="username"
                 >
-                  Username or Email
+                  Full name
+                </label>
+                <input
+                  className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="text"
+                  // placeholder="Username"
+                />
+              </div>
+              <div>
+                <label
+                  className="block text-gray-400 text-sm mb-2"
+                  htmlFor="username"
+                >
+                  Email
+                </label>
+                <input
+                  className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="text"
+                  // placeholder="Username"
+                />
+              </div>
+              <div>
+                <label
+                  className="block text-gray-400 text-sm mb-2"
+                  htmlFor="username"
+                >
+                  Phone number
+                </label>
+                <input
+                  className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="text"
+                  // placeholder="Username"
+                />
+              </div>
+              <div>
+                <label
+                  className="block text-gray-400 text-sm mb-2"
+                  htmlFor="username"
+                >
+                  Password
                 </label>
                 <input
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -32,7 +74,7 @@ function Signup(props) {
                   className="block text-gray-400 text-sm mb-2"
                   htmlFor="password"
                 >
-                  Password
+                  Confirm Password
                 </label>
                 <input
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -44,7 +86,7 @@ function Signup(props) {
               <div className="space-y-4">
                 <button
                   style={{ backgroundColor: "#F08D6E" }}
-                  className="text-sm px-4 py-1 w-full rounded-sm"
+                  className="text-sm px-4 py-1 w-full rounded-sm mt-3"
                 >
                   LOGIN
                 </button>
@@ -56,16 +98,16 @@ function Signup(props) {
               </div>
             </div>
           </div>
-          <p className="text-sm mt-24 text-center">
-            Don’t have an account?{" "}
+          <p className="text-sm mt-12 text-center">
+          Already have any account?{" "}
             <Link to="/Login" style={{ color: "#E5725D" }}>
-              Login
+            SIGN IN
             </Link>
           </p>
         </div>
       </div>
       <div
-        className="w-1/2 min-h-screen hidden sm:block"
+        className="w-1/3 min-h-screen hidden sm:block"
         style={{
           backgroundImage: `url(${Background})`,
           backgroundRepeat: "no-repeat",

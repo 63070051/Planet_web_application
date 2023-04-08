@@ -4,8 +4,8 @@ import Background from "../assets/background_logo.svg";
 import { Link } from "react-router-dom";
 function Login(props) {
   return (
-    <div style={{ backgroundColor: "#FBF7F0" }} className="flex">
-      <div className="w-full sm:w-1/2 flex justify-center items-center relative min-h-screen">
+    <div style={{ backgroundColor: "#FBF7F0" }} className="flex justify-between">
+      <div className="w-full sm:w-2/3 flex justify-center items-center relative min-h-screen">
         <div>
           <div className="flex justify-center">
             <img className="w-24 mb-6" src={Logo} alt="" srcSet="" />
@@ -65,7 +65,7 @@ function Login(props) {
         </div>
       </div>
       <div
-        className="w-1/2 min-h-screen hidden sm:block"
+        className="w-1/3 min-h-screen hidden sm:block"
         style={{
           backgroundImage: `url(${Background})`,
           backgroundRepeat: "no-repeat",
