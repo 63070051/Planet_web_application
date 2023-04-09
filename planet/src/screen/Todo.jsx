@@ -6,6 +6,8 @@ import "../fonts/Kumbh_Sans/static/KumbhSans-Regular.ttf";
 import "../fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
 import RightBackground from "../assets/TodoRightBackground.png";
 import Logo from "../assets/logo.svg";
+import Plus from "../assets/plus.svg";
+import Minus from "../assets/minus.svg";
 import DashBoard from "../assets/dashboard.svg";
 import Account from "../assets/account.svg";
 import Notes from "../assets/notes.svg";
@@ -15,6 +17,7 @@ import Notification from "../assets/notification.svg";
 import Profile from "../assets/profile.svg";
 import H_bg from "../assets/hamburger_bg.png";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 const LinkTo = [
   {
@@ -44,7 +47,7 @@ const LinkTo = [
   },
 ];
 
-const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
 const DAY = [
   {
@@ -143,14 +146,50 @@ const DAY = [
   },
 ];
 
-function DayComponent(props) {
-  return (
-    <div className="rounded-full border py-2 px-2" style={{borderColor : "#D9D9D9"}}>
-      <p className="text-center text-xl">{props.day}</p>
-      <p className="text-xs">{props.days}</p>
-    </div>
-  );
-}
+const DATACHECKBOX = [
+  "Send email to meaw.",
+  "Clean the room.",
+  "Order new dress.",
+  "manager",
+  "manager",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+  "Call manager.",
+];
 
 function LinkNav(props) {
   return (
@@ -169,9 +208,43 @@ function LinkNav(props) {
   );
 }
 
-function TodoList() {
+function CheckBox(props) {
+  const [index, setIndex] = useState(props.index);
   return (
-    <div>
+    <div className="border-t flex justify-between items-center px-6 py-3">
+      <div className="flex space-x-4 items-center">
+        <input type="checkbox" className="w-4 h-4 border-gray-300 rounded accent-[#FFAA9B]"/>
+        <p style={{ fontFamily: "jura" }}>{props.text}</p>
+      </div>
+      <img src={Minus} alt="" />
+    </div>
+  );
+}
+
+function TodoList() {
+  const [focus, setFocus] = useState(new Date().getDate());
+
+  function DayComponent(props) {
+    return (
+      <div
+        className="rounded-full border py-2 w-10 my-2 cursor-pointer"
+        style={{ borderColor: props.bg, backgroundColor: props.bg , fontFamily : "jura"}}
+        onClick={() => {
+          setFocus(props.day);
+        }}
+      >
+        <p className="text-center text-xl" style={{ color: props.color }}>
+          {props.day}
+        </p>
+        <p className="text-xs text-center" style={{ color: props.color }}>
+          {props.days}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="select-none">
       {/* // Body Grid */}
       <div
         className="grid grid-cols-5 gap-4 min-h-screen pr-6"
@@ -226,22 +299,48 @@ function TodoList() {
             </div>
           </div>
           <div
-            className="mt-6 rounded-xl pt-8 px-8 pb-6"
+            className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85.5vh]"
             style={{ backgroundColor: "#FBF7F0" }}
           >
             <p className="text-2xl" style={{ fontFamily: "jockey" }}>
               TO DO LIST
             </p>
-            <div className="overflow-x-scroll flex space-x-2 py-2">
-              {DAY.map((value, index) => {
-                if(index > 7){
-
-                }
-                else{
-
-                    return <DayComponent day={value.daynum} days={DAYS[((parseInt(value.daynum)-1) % 6)]} key={index}/>
-                }
-              })}
+            <div className="relative flex items-center">
+              <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll">
+                {DAY.map((value, index) => {
+                  return index + 1 == focus ? (
+                    <DayComponent
+                      day={value.daynum}
+                      days={DAYS[(parseInt(value.daynum) - 1) % 7]}
+                      color={"white"}
+                      bg={"#FFAA9B"}
+                      key={index}
+                    />
+                  ) : (
+                    <DayComponent
+                      day={value.daynum}
+                      days={DAYS[(parseInt(value.daynum) - 1) % 7]}
+                      color={"#B5B7B9"}
+                      bg={"FBF7F0"}
+                      key={index}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+            <div
+              className="w-full mt-10 border rounded-lg"
+              style={{ borderColor: "#D9DADA" }}
+            >
+              <div className="text-xl flex justify-between items-center px-6 py-2">
+                <p style={{ fontFamily: "jockey" }}>{focus} {DAYS[(parseInt(focus) - 1) % 7]}</p>
+                <img className="w-6" src={Plus} alt="" />
+              </div>
+              <div className="overflow-y-auto h-[55vh]">
+                {DATACHECKBOX.map((value, index) =>{
+                  return <CheckBox text={value} key={index} index={index}/>
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -266,7 +365,7 @@ function TodoList() {
             >
               Completed Tasks
             </p>
-            <div className="mt-12">
+            <div className="mt-16 lg:mt-12 xl:mt-8 px-4 mx-auto">
               <DonutChart />
             </div>
             <div className="px-6">

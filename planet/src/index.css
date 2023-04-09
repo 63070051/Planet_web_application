@@ -18,3 +18,7 @@
     font-family: "Kumbh_Sans_Regular";
     src: local("Kumbh_Sans"), url("./fonts/Kumbh_Sans/static/KumbhSans-Regular.ttf") format("truetype");
 }
+@font-face {
+    font-family: "jura";
+    src: local("Jura"), url("./fonts/Jura/static/Jura-Medium.ttf") format("truetype");
+}
