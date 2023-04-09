@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import Hamberger from "../component/Hamburger";
 import DonutChart from "../component/DonutChart";
 import "../fonts/Jockey_One/JockeyOne-Regular.ttf";
@@ -12,10 +12,9 @@ import NavigationBar from "../component/NavigationBar";
 import Notification from "../assets/notification.svg";
 import Profile from "../assets/profile.svg";
 import H_bg from "../assets/hamburger_bg.png";
+import { useHorizontalScroll } from "../component/UseHorizontal";
 
 import moment from "moment";
-
-
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
@@ -161,14 +160,23 @@ const DATACHECKBOX = [
   "Call manager.",
 ];
 
-
-
 function CheckBox(props) {
   const [index, setIndex] = useState(props.index);
+  const [checked, setChecked] = useState(false);
   return (
     <div className="border-t flex justify-between items-center px-6 py-3">
-      <div className="flex space-x-4 items-center">
-        <input type="checkbox" className="w-4 h-4 border-gray-300 rounded accent-[#FFAA9B]"/>
+      <div
+        className="flex space-x-4 items-center"
+        onClick={() => {
+          setChecked(!checked);
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={() => {}}
+          className="w-4 h-4 border-gray-300 rounded accent-[#FFAA9B]"
+        />
         <p style={{ fontFamily: "jura" }}>{props.text}</p>
       </div>
       <img src={Minus} alt="" />
@@ -178,12 +186,16 @@ function CheckBox(props) {
 
 function TodoList() {
   const [focus, setFocus] = useState(new Date().getDate());
-
+  const scrollRef = useHorizontalScroll();
   function DayComponent(props) {
     return (
       <div
         className="rounded-full border py-2 w-10 my-2 cursor-pointer"
-        style={{ borderColor: props.bg, backgroundColor: props.bg , fontFamily : "jura"}}
+        style={{
+          borderColor: props.bg,
+          backgroundColor: props.bg,
+          fontFamily: "jura",
+        }}
         onClick={() => {
           setFocus(props.day);
         }}
@@ -198,6 +210,77 @@ function TodoList() {
     );
   }
 
+  function Body() {
+    return (
+      <div className="col-span-3 px-2 pt-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+              Welcome back, Kwanpf
+            </p>
+            <p className="text-xl" style={{ fontFamily: "Kumbh_Sans_Regular" }}>
+              What’s Up Today?
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <img className="w-10" src={Notification} alt="" />
+            <img className="w-10" src={Profile} alt="" />
+          </div>
+        </div>
+        <div
+          className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85.5vh]"
+          style={{ backgroundColor: "#FBF7F0" }}
+        >
+          <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+            TO DO LIST
+          </p>
+          <div className="relative flex items-center">
+            <div
+              className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll "
+              ref={scrollRef}
+            >
+              {DAY.map((value, index) => {
+                return index + 1 == focus ? (
+                  <DayComponent
+                    day={value.daynum}
+                    days={DAYS[(parseInt(value.daynum) - 1) % 7]}
+                    color={"white"}
+                    bg={"#FFAA9B"}
+                    key={index}
+                  />
+                ) : (
+                  <DayComponent
+                    day={value.daynum}
+                    days={DAYS[(parseInt(value.daynum) - 1) % 7]}
+                    color={"#B5B7B9"}
+                    bg={"FBF7F0"}
+                    key={index}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <div
+            className="w-full mt-10 border rounded-lg"
+            style={{ borderColor: "#D9DADA" }}
+          >
+            <div className="text-xl flex justify-between items-center px-6 py-2">
+              <p style={{ fontFamily: "jockey" }}>
+                {focus} {DAYS[(parseInt(focus) - 1) % 7]}
+              </p>
+              <img className="w-6" src={Plus} alt="" />
+            </div>
+            <div className="overflow-y-auto h-[55vh]">
+              {DATACHECKBOX.map((value, index) => {
+                return <CheckBox text={value} key={index} index={index}/>;
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="select-none">
       {/* // Body Grid */}
@@ -206,72 +289,9 @@ function TodoList() {
         style={{ backgroundColor: "#EFEADE" }}
       >
         {/* // Navigation Bar */}
-        <NavigationBar/>
+        <NavigationBar />
         {/* // Todo Body */}
-        <div className="col-span-3 px-2 pt-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                Welcome back, Kwanpf
-              </p>
-              <p
-                className="text-xl"
-                style={{ fontFamily: "Kumbh_Sans_Regular" }}
-              >
-                What’s Up Today?
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <img className="w-10" src={Notification} alt="" />
-              <img className="w-10" src={Profile} alt="" />
-            </div>
-          </div>
-          <div
-            className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85.5vh]"
-            style={{ backgroundColor: "#FBF7F0" }}
-          >
-            <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-              TO DO LIST
-            </p>
-            <div className="relative flex items-center">
-              <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll">
-                {DAY.map((value, index) => {
-                  return index + 1 == focus ? (
-                    <DayComponent
-                      day={value.daynum}
-                      days={DAYS[(parseInt(value.daynum) - 1) % 7]}
-                      color={"white"}
-                      bg={"#FFAA9B"}
-                      key={index}
-                    />
-                  ) : (
-                    <DayComponent
-                      day={value.daynum}
-                      days={DAYS[(parseInt(value.daynum) - 1) % 7]}
-                      color={"#B5B7B9"}
-                      bg={"FBF7F0"}
-                      key={index}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-            <div
-              className="w-full mt-10 border rounded-lg"
-              style={{ borderColor: "#D9DADA" }}
-            >
-              <div className="text-xl flex justify-between items-center px-6 py-2">
-                <p style={{ fontFamily: "jockey" }}>{focus} {DAYS[(parseInt(focus) - 1) % 7]}</p>
-                <img className="w-6" src={Plus} alt="" />
-              </div>
-              <div className="overflow-y-auto h-[55vh]">
-                {DATACHECKBOX.map((value, index) =>{
-                  return <CheckBox text={value} key={index} index={index}/>
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
+        <Body />
         {/* //Task Status */}
         <div
           style={{ backgroundColor: "#FBF7F0" }}
@@ -293,7 +313,12 @@ function TodoList() {
             >
               Completed Tasks
             </p>
-            <div className="mt-16 lg:mt-12 xl:mt-8 px-4 mx-auto">
+            <div className="mt-16 lg:mt-12 xl:mt-8 px-4 mx-auto relative">
+              <img
+                className="absolute w-10 right-0 bottom-0 left-0 top-0 m-auto"
+                src={Plus}
+                alt=""
+              />
               <DonutChart />
             </div>
             <div className="px-6">
