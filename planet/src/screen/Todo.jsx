@@ -8,44 +8,14 @@ import RightBackground from "../assets/TodoRightBackground.png";
 import Logo from "../assets/logo.svg";
 import Plus from "../assets/plus.svg";
 import Minus from "../assets/minus.svg";
-import DashBoard from "../assets/dashboard.svg";
-import Account from "../assets/account.svg";
-import Notes from "../assets/notes.svg";
-import Setting from "../assets/setting.svg";
-import Todo from "../assets/todo.svg";
+import NavigationBar from "../component/NavigationBar";
 import Notification from "../assets/notification.svg";
 import Profile from "../assets/profile.svg";
 import H_bg from "../assets/hamburger_bg.png";
-import { Link } from "react-router-dom";
+
 import moment from "moment";
 
-const LinkTo = [
-  {
-    link: "/Dashboard",
-    src: DashBoard,
-    text: "DASHBOARD",
-  },
-  {
-    link: "/Todo",
-    src: Todo,
-    text: "TO DO LIST",
-  },
-  {
-    link: "/Note",
-    src: Notes,
-    text: "NOTES",
-  },
-  {
-    link: "/Accounts",
-    src: Account,
-    text: "Account",
-  },
-  {
-    link: "/Setting",
-    src: Setting,
-    text: "Setting",
-  },
-];
+
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
@@ -191,22 +161,7 @@ const DATACHECKBOX = [
   "Call manager.",
 ];
 
-function LinkNav(props) {
-  return (
-    <div className="duration-500 hover:bg-red-500 px-4 py-2 rounded-lg w-full">
-      <div className="flex justify-center items-center">
-        <Link
-          className="w-full"
-          to={props.obj.link}
-          style={{ display: "flex", alignItems: "center" }}
-        >
-          <img className="ml-12 mr-0 w-8" src={props.obj.src} alt="" />{" "}
-          <p className="text-center ml-4">{props.obj.text}</p>
-        </Link>
-      </div>
-    </div>
-  );
-}
+
 
 function CheckBox(props) {
   const [index, setIndex] = useState(props.index);
@@ -251,34 +206,7 @@ function TodoList() {
         style={{ backgroundColor: "#EFEADE" }}
       >
         {/* // Navigation Bar */}
-        <div style={{ backgroundColor: "#FBF7F0" }} className="col-span-1">
-          <div
-            className="space-x-4 p-10"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontFamily: "jockey",
-            }}
-          >
-            <img className="w-12" src={Logo} alt="" />
-            <p className="text-2xl">Planet</p>
-          </div>
-          <div
-            className="w-full"
-            style={{ display: "flex", justifyContent: "center" }}
-          >
-            <div
-              className="space-y-4 text-lg w-full"
-              style={{ fontFamily: "jockey" }}
-            >
-              {LinkTo.map(function (object, i) {
-                return <LinkNav obj={object} key={i} />;
-              })}
-            </div>
-            <img className="absolute bottom-0 left-0 w-40" src={H_bg} alt="" />
-          </div>
-        </div>
+        <NavigationBar/>
         {/* // Todo Body */}
         <div className="col-span-3 px-2 pt-6">
           <div className="flex justify-between items-center">
@@ -347,7 +275,7 @@ function TodoList() {
         {/* //Task Status */}
         <div
           style={{ backgroundColor: "#FBF7F0" }}
-          className="rounded-xl mt-6 mb-6"
+          className="rounded-xl mt-6 mb-6 col-span-1"
         >
           <div className="flex justify-end">
             <img className="w-4/5" src={RightBackground} alt="" />
