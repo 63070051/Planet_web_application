@@ -37,10 +37,10 @@ const LinkTo = [
 
 function LinkNav(props) {
   return (
-    <div className="duration-500 hover:bg-red-500 px-4 py-2 rounded-lg w-full">
+    <div className="duration-500 hover:bg-[#FFAA9B]  rounded-lg w-full">
       <div className="flex justify-center items-center">
         <Link
-          className="w-full"
+          className="w-full px-4 py-2"
           to={props.obj.link}
           style={{ display: "flex", alignItems: "center" }}
         >
