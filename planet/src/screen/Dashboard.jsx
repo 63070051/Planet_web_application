@@ -202,13 +202,12 @@ function Dashboard(props) {
         <img src={Minus} alt="" />
       </div>
     );
-  }
-
+  };
   return (
     <div className="select-none">
       {/* // Body Grid */}
       <div
-        className="grid grid-cols-4 lg:grid-cols-5 min-h-screen"
+        className="grid grid-cols-4 lg:grid-cols-5 min-h-screen pb-20 sm:pb-0"
         style={{ backgroundColor: "#EFEADE" }}
       >
         {/* // Navigation Bar */}
@@ -234,7 +233,7 @@ function Dashboard(props) {
           </div>
           {/* graph */}
           <div
-            className="grid grid-cols-2 sm:grid-cols-3 gap-4 h-[30%] rounded-2xl relative"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4 h-[35%] sm:h-[30%] rounded-2xl relative"
             style={{ backgroundColor: "#FBF7F0" }}
           >
             <div className="rounded-2xl cols-span-1 flex items-center justify-center">
@@ -309,9 +308,9 @@ function Dashboard(props) {
               </div>
             </div>
             <div className="flex items-center justify-center">
-              <div className="w-[200px] relative">
+              <div className="w-[120px] sm:w-[200px] relative">
                 <img
-                  className="m-auto absolute top-0 right-0 bottom-0 left-0"
+                  className="m-auto absolute top-0 right-0 bottom-0 left-0 w-6 sm:w-10"
                   src={Plus}
                   alt=""
                 />
@@ -329,7 +328,7 @@ function Dashboard(props) {
                   <p style={{ fontFamily: "jockey" }}>1 may</p>
                   <img className="w-6" src={Plus} alt="" />
                 </div>
-                <div className="overflow-y-auto h-[360px]">
+                <div className="overflow-y-auto h-[150px] sm:h-[360px]">
                   {DATACHECKBOX.map((value, index) => {
                     return <CheckBox text={value} key={index} index={index} />;
                   })}
@@ -345,7 +344,7 @@ function Dashboard(props) {
                   <p style={{ fontFamily: "jockey" }}>1 may</p>
                   <img className="w-6" src={Plus} alt="" />
                 </div>
-                <div className="overflow-y-scroll max-h-[360px]">
+                <div className="overflow-y-scroll h-[150px]  sm:h-[360px]">
                   {DATACHECKBOX.map((value, index) => {
                     return <CheckBox text={value} key={index} index={index} />;
                   })}

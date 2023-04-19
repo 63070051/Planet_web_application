@@ -15,6 +15,23 @@ import H_bg from "../assets/hamburger_bg.png";
 import { useHorizontalScroll } from "../component/UseHorizontal";
 
 import moment from "moment";
+import axios from "axios";
+import path from "../../path";
+
+const MONTH = [
+  "January",
+  "Febuary",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
@@ -186,7 +203,30 @@ function CheckBox(props) {
 
 function TodoList() {
   const [focus, setFocus] = useState(new Date().getDate());
+  const [focusMonth, setFocusMonth] = useState(MONTH[new Date().getMonth()]);
+  const [focusDay, setFocusDay] = useState(
+    new Date().toLocaleString("en-us", { weekday: "long" })
+  );
+  const [focusCalendar, setFocusCalendar] = useState();
+  const [allCalendar, setAllCalendar] = useState();
   const scrollRef = useHorizontalScroll();
+
+  useEffect(() => {
+    axios
+      .post(`${path}/calendar`, { id: localStorage.getItem("id") })
+      .then((res) => {
+        setAllCalendar(res.data);
+        res.data.forEach((value) => {
+          if (Object.keys(value)[0] == focusMonth) {
+            setFocusCalendar(value[focusMonth]);
+          }
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+
   function DayComponent(props) {
     return (
       <div
@@ -198,13 +238,17 @@ function TodoList() {
         }}
         onClick={() => {
           setFocus(props.day);
+          setFocusDay(props.days.toUpperCase());
         }}
       >
         <p className="text-center text-xl" style={{ color: props.color }}>
           {props.day}
         </p>
-        <p className="text-xs text-center" style={{ color: props.color }}>
-          {props.days}
+        <p
+          className="text-xs text-center font-bold"
+          style={{ color: props.color }}
+        >
+          {props.days.toUpperCase().slice(0, 3)}
         </p>
       </div>
     );
@@ -231,33 +275,64 @@ function TodoList() {
           className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85.5vh]"
           style={{ backgroundColor: "#FBF7F0" }}
         >
-          <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-            TO DO LIST
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+              TO DO LIST
+            </p>
+            <div className="relative">
+              <select
+                defaultValue={focusMonth}
+                onChange={(e) => {
+                  allCalendar.forEach((value) => {
+                    if (Object.keys(value)[0] == e.target.value) {
+                      setFocusCalendar(value[e.target.value]);
+                      setFocusMonth(e.target.value)
+                      setFocusDay(((value[e.target.value])[focus-1][focus-1]).day.toUpperCase())
+                    }
+                  });
+                }}
+                className="w-40 p-2.5 text-gray-500 text-center bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
+              >
+                <option value="January">January</option>
+                <option value="Febuary">Febuary</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+            </div>
+          </div>
           <div className="relative flex items-center">
             <div
               className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll "
               ref={scrollRef}
             >
-              {DAY.map((value, index) => {
-                return index + 1 == focus ? (
-                  <DayComponent
-                    day={value.daynum}
-                    days={DAYS[(parseInt(value.daynum) - 1) % 7]}
-                    color={"white"}
-                    bg={"#FFAA9B"}
-                    key={index}
-                  />
-                ) : (
-                  <DayComponent
-                    day={value.daynum}
-                    days={DAYS[(parseInt(value.daynum) - 1) % 7]}
-                    color={"#B5B7B9"}
-                    bg={"FBF7F0"}
-                    key={index}
-                  />
-                );
-              })}
+              {focusCalendar &&
+                focusCalendar.map((value, index) => {
+                  return index + 1 == focus ? (
+                    <DayComponent
+                      day={index + 1}
+                      days={value[focus].day}
+                      color={"white"}
+                      bg={"#FFAA9B"}
+                      key={index}
+                    />
+                  ) : (
+                    <DayComponent
+                      day={index + 1}
+                      days={value[index + 1].day}
+                      color={"#B5B7B9"}
+                      bg={"FBF7F0"}
+                      key={index}
+                    />
+                  );
+                })}
             </div>
           </div>
           <div
@@ -266,13 +341,13 @@ function TodoList() {
           >
             <div className="text-xl flex justify-between items-center px-6 py-2">
               <p style={{ fontFamily: "jockey" }}>
-                {focus} {DAYS[(parseInt(focus) - 1) % 7]}
+                {focus} {focusDay}
               </p>
               <img className="w-6" src={Plus} alt="" />
             </div>
             <div className="overflow-y-auto h-[55vh]">
               {DATACHECKBOX.map((value, index) => {
-                return <CheckBox text={value} key={index} index={index}/>;
+                return <CheckBox text={value} key={index} index={index} />;
               })}
             </div>
           </div>
