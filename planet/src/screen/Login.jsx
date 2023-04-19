@@ -49,7 +49,7 @@ function Login(props) {
                   LOGIN
                 </button>
                 <div className="flex justify-center items-center">
-                  <Link className="text-gray-400 text-sm text-center duration-500 hover:text-red-600">
+                  <Link to="/Forgot" className="text-gray-400 text-sm text-center duration-500 hover:text-red-600">
                     Forgot your password ?
                   </Link>
                 </div>

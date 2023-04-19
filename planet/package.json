@@ -10,10 +10,14 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1345.0",
+    "chart.js": "^4.2.1",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-burger-menu": "^3.0.9",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.9.0"
+    "react-router-dom": "^6.9.0",
+    "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
