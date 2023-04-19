@@ -5,6 +5,7 @@ import Login from './screen/Login'
 import Signup from './screen/Signup'
 import Start from './screen/Start'
 import Todo from './screen/Todo'
+import Forgot from './screen/Forgot'
 function App() {
   return (
     <BrowserRouter>
@@ -14,6 +15,7 @@ function App() {
         <Route path='/Login' element={<Login />} />
         <Route path='/Signup' element={<Signup />} />
         <Route path='/Todo' element={<Todo />} />
+        <Route path='/Forgot' element={<Forgot />} />
       </Routes>
     </BrowserRouter>
   )
