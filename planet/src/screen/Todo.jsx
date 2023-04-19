@@ -287,7 +287,7 @@ function TodoList() {
                     if (Object.keys(value)[0] == e.target.value) {
                       setFocusCalendar(value[e.target.value]);
                       setFocusMonth(e.target.value)
-                      setFocusDay(((value[e.target.value])[focus-1][focus-1]).day.toUpperCase())
+                      setFocusDay(((value[e.target.value])[focus-1][focus]).day.toUpperCase())
                     }
                   });
                 }}
