@@ -5,7 +5,8 @@ import Login from './screen/Login'
 import Signup from './screen/Signup'
 import Start from './screen/Start'
 import Todo from './screen/Todo'
-import Note from './screen/note'
+import Note from './screen/Note'
+import Editnote from './screen/Editnote'
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +17,7 @@ function App() {
         <Route path='/Signup' element={<Signup />} />
         <Route path='/Todo' element={<Todo />} />
         <Route path='/Note' element={<Note />} />
+        <Route path='/Editnote' element={<Editnote />} />
       </Routes>
     </BrowserRouter>
   )
