@@ -1,10 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../assets/logo.svg";
 import Background from "../assets/background_logo.svg";
 import { Link } from "react-router-dom";
+import path from "../../path";
+import axios from "axios";
+import md5 from "md5";
 function Login(props) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function SignIn() {
+    axios
+      .post(`${path}/login-user`, {email : email, password : md5(password)})
+      .then((res) => {
+        if(res.data.Items.length == 0){
+          alert("Email or Password is invalid")
+        }
+        else{
+          localStorage.setItem("id", res.data.Items[0].id)
+          window.location.replace("Dashboard");
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
   return (
-    <div style={{ backgroundColor: "#FBF7F0" }} className="flex justify-between">
+    <div
+      style={{ backgroundColor: "#FBF7F0" }}
+      className="flex justify-between"
+    >
       <div className="w-full sm:w-2/3 flex justify-center items-center relative min-h-screen">
         <div>
           <div className="flex justify-center">
@@ -16,15 +42,18 @@ function Login(props) {
               <div>
                 <label
                   className="block text-gray-400 text-sm mb-2"
-                  htmlFor="username"
+                  htmlFor="email"
                 >
-                  Username or Email
+                  Email
                 </label>
                 <input
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="username"
+                  id="email"
                   type="text"
-                  // placeholder="Username"
+                  placeholder="Email"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
                 />
               </div>
               <div>
@@ -38,11 +67,17 @@ function Login(props) {
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="password"
                   type="password"
-                  // placeholder="Username"
+                  placeholder="************"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
                 />
               </div>
               <div className="space-y-4">
                 <button
+                  onClick={() => {
+                    SignIn();
+                  }}
                   style={{ backgroundColor: "#F08D6E" }}
                   className="text-sm px-4 py-1 w-full rounded-sm"
                 >
