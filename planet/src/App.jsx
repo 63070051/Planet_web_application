@@ -5,7 +5,7 @@ import Login from './screen/Login'
 import Signup from './screen/Signup'
 import Start from './screen/Start'
 import Todo from './screen/Todo'
-import Note from './screen/Note'
+import Note from './screen/note'
 function App() {
   return (
     <BrowserRouter>
