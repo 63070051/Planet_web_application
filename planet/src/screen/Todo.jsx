@@ -12,8 +12,6 @@ import NavigationBar from "../component/NavigationBar";
 import Notification from "../assets/notification.svg";
 import Profile from "../assets/profile.svg";
 import H_bg from "../assets/hamburger_bg.png";
-import { useHorizontalScroll } from "../component/UseHorizontal";
-
 import moment from "moment";
 import axios from "axios";
 import path from "../../path";
@@ -31,150 +29,6 @@ const MONTH = [
   "October",
   "November",
   "December",
-];
-
-const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-
-const DAY = [
-  {
-    daynum: "1",
-  },
-  {
-    daynum: "2",
-  },
-  {
-    daynum: "3",
-  },
-  {
-    daynum: "4",
-  },
-  {
-    daynum: "5",
-  },
-  {
-    daynum: "6",
-  },
-  {
-    daynum: "7",
-  },
-  {
-    daynum: "8",
-  },
-  {
-    daynum: "9",
-  },
-  {
-    daynum: "10",
-  },
-  {
-    daynum: "11",
-  },
-  {
-    daynum: "12",
-  },
-  {
-    daynum: "13",
-  },
-  {
-    daynum: "14",
-  },
-  {
-    daynum: "15",
-  },
-  {
-    daynum: "16",
-  },
-  {
-    daynum: "17",
-  },
-  {
-    daynum: "18",
-  },
-
-  {
-    daynum: "19",
-  },
-  {
-    daynum: "20",
-  },
-  {
-    daynum: "21",
-  },
-  {
-    daynum: "22",
-  },
-  {
-    daynum: "23",
-  },
-  {
-    daynum: "24",
-  },
-  {
-    daynum: "25",
-  },
-  {
-    daynum: "26",
-  },
-  {
-    daynum: "27",
-  },
-  {
-    daynum: "28",
-  },
-  {
-    daynum: "29",
-  },
-  {
-    daynum: "30",
-  },
-  {
-    daynum: "31",
-  },
-];
-
-const DATACHECKBOX = [
-  "Send email to meaw.",
-  "Clean the room.",
-  "Order new dress.",
-  "manager",
-  "manager",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
-  "Call manager.",
 ];
 
 function CheckBox(props) {
@@ -209,23 +63,74 @@ function TodoList() {
   );
   const [focusCalendar, setFocusCalendar] = useState();
   const [allCalendar, setAllCalendar] = useState();
-  const scrollRef = useHorizontalScroll();
+  const [myTask, setMyTask] = useState();
 
   useEffect(() => {
     axios
       .post(`${path}/calendar`, { id: localStorage.getItem("id") })
       .then((res) => {
         setAllCalendar(res.data);
-        res.data.forEach((value) => {
-          if (Object.keys(value)[0] == focusMonth) {
-            setFocusCalendar(value[focusMonth]);
-          }
-        });
+        setFocusCalendar(res.data[focusMonth]);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+    axios
+      .post(`${path}/mytodo`, {
+        id: localStorage.getItem("id"),
+        day: focus,
+        month: focusMonth,
+      })
+      .then((res) => {
+        if (Object.keys(res.data).length != 0) {
+          setMyTask(res.data.userTodo);
+        }
       })
       .catch((e) => {
         console.log(e);
       });
   }, []);
+
+  function ChangeTaskDay(day) {
+    console.log(day, focusMonth);
+    axios
+      .post(`${path}/mytodo`, {
+        id: localStorage.getItem("id"),
+        day: day,
+        month: focusMonth,
+      })
+      .then((res) => {
+        if (Object.keys(res.data).length != 0) {
+          setMyTask(res.data.userTodo);
+        } else {
+          setMyTask([]);
+        }
+        console.log(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
+  function ChangeTaskDayOnMonth(day, month) {
+    axios
+      .post(`${path}/mytodo`, {
+        id: localStorage.getItem("id"),
+        day: day,
+        month: month,
+      })
+      .then((res) => {
+        if (Object.keys(res.data).length != 0) {
+          setMyTask(res.data.userTodo);
+          console.log(res.data);
+        } else {
+          setMyTask([]);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
 
   function DayComponent(props) {
     return (
@@ -239,6 +144,7 @@ function TodoList() {
         onClick={() => {
           setFocus(props.day);
           setFocusDay(props.days.toUpperCase());
+          ChangeTaskDay(props.day);
         }}
       >
         <p className="text-center text-xl" style={{ color: props.color }}>
@@ -283,18 +189,26 @@ function TodoList() {
               <select
                 defaultValue={focusMonth}
                 onChange={(e) => {
-                  allCalendar.forEach((value) => {
-                    if (Object.keys(value)[0] == e.target.value) {
-                      setFocusCalendar(value[e.target.value]);
-                      setFocusMonth(e.target.value)
-                      setFocusDay(((value[e.target.value])[focus-1][focus]).day.toUpperCase())
-                    }
-                  });
+                  setFocusCalendar(allCalendar[e.target.value]);
+                  setFocusMonth(e.target.value);
+                  if (Object.keys(allCalendar[e.target.value]).length < focus) {
+                    setFocusDay(
+                      allCalendar[e.target.value][
+                        new Date().getDate()
+                      ].day.toUpperCase()
+                    );
+                    setFocus(new Date().getDate());
+                  } else {
+                    setFocusDay(
+                      allCalendar[e.target.value][focus].day.toUpperCase()
+                    );
+                  }
+                  ChangeTaskDayOnMonth(focus, e.target.value);
                 }}
                 className="w-40 p-2.5 text-gray-500 text-center bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
               >
                 <option value="January">January</option>
-                <option value="Febuary">Febuary</option>
+                <option value="February">February</option>
                 <option value="March">March</option>
                 <option value="April">April</option>
                 <option value="May">May</option>
@@ -309,16 +223,13 @@ function TodoList() {
             </div>
           </div>
           <div className="relative flex items-center">
-            <div
-              className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll "
-              ref={scrollRef}
-            >
+            <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll ">
               {focusCalendar &&
-                focusCalendar.map((value, index) => {
+                Object.keys(focusCalendar).map((value, index) => {
                   return index + 1 == focus ? (
                     <DayComponent
                       day={index + 1}
-                      days={value[focus].day}
+                      days={focusCalendar[value].day}
                       color={"white"}
                       bg={"#FFAA9B"}
                       key={index}
@@ -326,7 +237,7 @@ function TodoList() {
                   ) : (
                     <DayComponent
                       day={index + 1}
-                      days={value[index + 1].day}
+                      days={focusCalendar[value].day}
                       color={"#B5B7B9"}
                       bg={"FBF7F0"}
                       key={index}
@@ -346,9 +257,10 @@ function TodoList() {
               <img className="w-6" src={Plus} alt="" />
             </div>
             <div className="overflow-y-auto h-[55vh]">
-              {DATACHECKBOX.map((value, index) => {
-                return <CheckBox text={value} key={index} index={index} />;
-              })}
+              {myTask &&
+                myTask.map((value, index) => {
+                  return <CheckBox text={value} key={index} index={index} />;
+                })}
             </div>
           </div>
         </div>
