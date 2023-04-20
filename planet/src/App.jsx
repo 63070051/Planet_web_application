@@ -8,6 +8,8 @@ import Todo from './screen/Todo'
 import Forgot from './screen/Forgot'
 import Allnotes from './screen/Allnotes'
 import Profile from './screen/Profile'
+import Note from './screen/Note'
+import Editnote from './screen/Editnote'
 function App() {
   return (
     <BrowserRouter>
@@ -19,6 +21,8 @@ function App() {
         <Route path='/Todo' element={<Todo />} />
         <Route path='/Allnotes' element={<Allnotes />} />
         <Route path='/Profile' element={<Profile />} />
+        <Route path='/Note' element={<Note />} />
+        <Route path='/Editnote' element={<Editnote />} />
       </Routes>
     </BrowserRouter>
   )
