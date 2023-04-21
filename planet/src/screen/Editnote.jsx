@@ -63,9 +63,9 @@ function Editnote(){
                 </div>
                 <div className=" w-full flex justify-between items-center px-6 py-2 " style={{ borderColor: "#D9DADA" }}>
                  <div>
-                 <p style={{fontFamily: "jura", color: "#00213F"}}>Enter Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic exercitationem aliquid quis? Consequuntur aspernatur voluptatem deleniti, inventore, ullam quod mollitia consequatur nemo ab facilis, voluptate tenetur excepturi sed voluptas rem. </p>
+                 <p style={{fontFamily: "jura", color: "#00213F"}}>Enter Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic exercitationem aliquid quis? Consequuntur aspernatur voluptatem deleniti, inventore, ullam quod mollitia consequatur nemo ab facilis, voluptate tenetur excepturi sed voluptas rem. Lorem, ipsum dolor sit amet consectetur adipisicing elit. Optio asperiores delectus, deleniti adipisci mollitia maiores vitae aut sapiente? Perspiciatis amet consequuntur, deserunt culpa accusantium non repudiandae facilis id commodi ex pariatur placeat soluta ullam voluptatem ducimus rem ut? Eum totam ipsa dignissimos quaerat ab, deserunt autem, natus itaque ex facere sapiente reiciendis a. Ea, placeat earum? Ullam voluptas distinctio quos!</p>
                 
-                 <p style={{color: '#B5B7B9', fontFamily: 'jura'}}>33124</p>
+                 <p className="pt-2" style={{color: '#B5B7B9', fontFamily: 'jura'}}>33124</p>
                 </div>
                 </div>
                

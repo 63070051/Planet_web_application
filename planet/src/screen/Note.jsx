@@ -65,7 +65,7 @@ function Note(){
                  <div>
                  <p style={{fontFamily: "jura", color: "#00213F"}}>Enter Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic exercitationem aliquid quis? Consequuntur aspernatur voluptatem deleniti, inventore, ullam quod mollitia consequatur nemo ab facilis, voluptate tenetur excepturi sed voluptas rem. </p>
                 
-                    <p style={{color: '#B5B7B9', fontFamily: 'jura'}}>33124</p>
+                    <p className="pt-2" style={{color: '#B5B7B9', fontFamily: 'jura'}}>33124</p>
                 </div>
                 </div>
                
