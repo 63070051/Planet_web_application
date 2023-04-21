@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Hamberger from "../component/Hamburger";
 import DonutChart from "../component/DonutChart";
 import "../fonts/Jockey_One/JockeyOne-Regular.ttf";
@@ -16,7 +16,50 @@ import H_bg from "../assets/hamburger_bg.png";
 
 function Dashboard(props) {
   const DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-
+  const DATACHECKBOX = [
+    "Send email to meaw.",
+    "Clean the room.",
+    "Order new dress.",
+    "manager",
+    "manager",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+    "Call manager.",
+  ];
   const DAY = [
     {
       daynum: "1",
@@ -136,18 +179,42 @@ function Dashboard(props) {
       </div>
     );
   }
+
+  function CheckBox(props) {
+    const [index, setIndex] = useState(props.index);
+    const [checked, setChecked] = useState(false);
+    return (
+      <div className="border-t flex justify-between items-center px-6 py-3">
+        <div
+          className="flex space-x-4 items-center"
+          onClick={() => {
+            setChecked(!checked);
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={() => {}}
+            className="w-4 h-4 border-gray-300 rounded accent-[#FFAA9B]"
+          />
+          <p style={{ fontFamily: "jura" }}>{props.text}</p>
+        </div>
+        <img src={Minus} alt="" />
+      </div>
+    );
+  };
   return (
     <div className="select-none">
       {/* // Body Grid */}
       <div
-        className="grid grid-cols-5 gap-4 min-h-screen pr-6"
+        className="grid grid-cols-4 lg:grid-cols-5 min-h-screen pb-20 sm:pb-0"
         style={{ backgroundColor: "#EFEADE" }}
       >
         {/* // Navigation Bar */}
         <NavigationBar />
         {/* // Todo Body */}
-        <div className="col-span-3 px-2 pt-6">
-          <div className="flex justify-between items-center">
+        <div className="col-span-4 px-4 h-full">
+          <div className="flex justify-between items-center h-[15%]">
             <div>
               <p className="text-2xl" style={{ fontFamily: "jockey" }}>
                 Welcome back, Kwanpf
@@ -166,13 +233,13 @@ function Dashboard(props) {
           </div>
           {/* graph */}
           <div
-            className="grid grid-cols-3 gap-4 "
+            className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4 h-[35%] sm:h-[30%] rounded-2xl relative"
             style={{ backgroundColor: "#FBF7F0" }}
           >
-            <div className="mt-6 rounded-2xl pt-8 px-8 pb-6 cols-span-1">
+            <div className="rounded-2xl cols-span-1 flex items-center justify-center">
               <div className="text-center">
                 <p
-                  className="text-7xl mt-13"
+                  className="text-7xl"
                   style={{ color: "#75C9A8", fontFamily: "jockey" }}
                 >
                   43%
@@ -185,146 +252,103 @@ function Dashboard(props) {
                 </p>
               </div>
             </div>
-            <div>
-              {/* middle */}
-              <div className="items-center flex justify-center h-full">
-               <div>
-               <div>
-                  <div className="space-x-2 flex items-center">
-                    <div className="w-2 h-2 rounded-full bg-black"></div>
-                    <p>Todo</p>
+            <div className="h-full sm:flex items-center justify-center hidden">
+              <div className="space-y-3">
+                <div>
+                  <div className="flex space-x-3 items-center">
+                    <div className="w-5 h-5 rounded-full bg-[#FFAA9B]"></div>
+                    <p
+                      className="text-2xl font-light"
+                      style={{ fontFamily: "jockey" }}
+                    >
+                      TO DO
+                    </p>
                   </div>
-                  <p style={{ color: "#B5B7B9", fontFamily: "jockey" }}>
-                    4 Task now
+                  <p
+                    style={{ fontFamily: "jura" }}
+                    className="ml-8 text-sm text-gray-400"
+                  >
+                    4 tasks now
                   </p>
                 </div>
                 <div>
-                  <div className="space-x-2 flex items-center">
-                    <div className="w-2 h-2 rounded-full bg-black"></div>
-                    <p>IN PROGRESS</p>
+                  <div className="flex space-x-3 items-center">
+                    <div className="w-5 h-5 rounded-full bg-[#CFCFAB]"></div>
+                    <p
+                      className="text-2xl font-light"
+                      style={{ fontFamily: "jockey" }}
+                    >
+                      IN PROGRESS
+                    </p>
                   </div>
-                  <p style={{ color: "#B5B7B9", fontFamily: "jockey" }}>
-                    4 Task now
+                  <p
+                    style={{ fontFamily: "jura" }}
+                    className="text-sm text-gray-400 ml-8"
+                  >
+                    1 tasks now
                   </p>
                 </div>
                 <div>
-                  <div className="space-x-2 flex items-center">
-                    <div className="w-2 h-2 rounded-full bg-black"></div>
-                    <p>DONE</p>
+                  <div className="flex space-x-3 items-center">
+                    <div className="w-5 h-5 rounded-full bg-[#75C9A8]"></div>
+                    <p
+                      className="text-2xl font-light"
+                      style={{ fontFamily: "jockey" }}
+                    >
+                      DONE
+                    </p>
                   </div>
-                  <p style={{ color: "#B5B7B9", fontFamily: "jockey" }}>
-                    4 Task now
+                  <p
+                    style={{ fontFamily: "jura" }}
+                    className="ml-8 text-sm text-gray-400"
+                  >
+                    2 completed
                   </p>
                 </div>
-               </div>
-               
               </div>
             </div>
-            <div>
-              <div className="flex justify-end">
-                <img className="w-5" src={Edit} alt="" />
-              </div>
-              <div>
+            <div className="flex items-center justify-center">
+              <div className="w-[120px] sm:w-[200px] relative">
+                <img
+                  className="m-auto absolute top-0 right-0 bottom-0 left-0 w-6 sm:w-10"
+                  src={Plus}
+                  alt=""
+                />
                 <DonutChart />
               </div>
             </div>
           </div>
-          <div className="flex justify-items-center ">
-            <div className="px-2 w-1/2 cols-span-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 h-[50%]">
+            <div className="col-span-1">
               <div
-                className="w-full mt-5 border rounded-lg "
+                className="w-full border rounded-lg h-full"
                 style={{ backgroundColor: "#FBF7F0" }}
               >
                 <div className="text-xl flex justify-between items-center px-6 py-2">
                   <p style={{ fontFamily: "jockey" }}>1 may</p>
                   <img className="w-6" src={Plus} alt="" />
                 </div>
-                <div className="overflow-y-auto h-[55vh]">
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
+                <div className="overflow-y-auto h-[150px] sm:h-[360px]">
+                  {DATACHECKBOX.map((value, index) => {
+                    return <CheckBox text={value} key={index} index={index} />;
+                  })}
                 </div>
               </div>
             </div>
-            <div className="px-2 w-1/2 cols-span-1">
+            <div className="col-span-1">
               <div
-                className="w-full mt-5 border rounded-lg "
+                className="w-full border rounded-lg h-full relative"
                 style={{ backgroundColor: "#FBF7F0" }}
               >
                 <div className="text-xl flex justify-between items-center px-6 py-2">
                   <p style={{ fontFamily: "jockey" }}>1 may</p>
                   <img className="w-6" src={Plus} alt="" />
                 </div>
-                <div className="overflow-y-auto h-[55vh]">
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
-                  <p>asdasd</p>
+                <div className="overflow-y-scroll h-[150px]  sm:h-[360px]">
+                  {DATACHECKBOX.map((value, index) => {
+                    return <CheckBox text={value} key={index} index={index} />;
+                  })}
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* //Task Status */}
-        <div
-          style={{ backgroundColor: "#FBF7F0" }}
-          className="rounded-xl mt-6 mb-6 col-span-1"
-        >
-          <div className="flex justify-end">
-            <img className="w-4/5" src={RightBackground} alt="" />
-          </div>
-          <div className="text">
-            <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-              TO DO LIST
-            </p>
-            <div className="relative flex items-center px-4">
-              <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll">
-                {DAY.map((value, index) => {
-                  return index + 1 == focus ? (
-                    <DayComponent
-                      day={value.daynum}
-                      days={DAYS[(parseInt(value.daynum) - 1) % 7]}
-                      color={"white"}
-                      bg={"#FFAA9B"}
-                      key={index}
-                    />
-                  ) : (
-                    <DayComponent
-                      day={value.daynum}
-                      days={DAYS[(parseInt(value.daynum) - 1) % 7]}
-                      color={"#B5B7B9"}
-                      bg={"FBF7F0"}
-                      key={index}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-          <div className="px-4">
-            <div
-              className="w-full mt-5 border rounded-lg "
-              style={{ borderColor: "#D9DADA" }}
-            >
-              <div className="text-xl flex justify-between items-center px-6 py-2">
-                <p style={{ fontFamily: "jockey" }}>1 may</p>
-                <img className="w-6" src={Plus} alt="" />
-              </div>
-              <div className="overflow-y-auto h-[55vh]">
-                <p>asdasd</p>
-                <p>asdasd</p>
-                <p>asdasd</p>
-                <p>asdasd</p>
-                <p>asdasd</p>
-                <p>asdasd</p>
-                <p>asdasd</p>
               </div>
             </div>
           </div>
