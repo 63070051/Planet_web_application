@@ -74,14 +74,14 @@ export default function Allnotes() {
                       className="text-lg font-semibold text-[#00213F]"
                       style={{ fontFamily: "jura" }}
                     >
-                      {item[Object.keys(item)[0]].topic}
+                      {item.topic}
                     </p>
                   </div>
                   <p
-                    className="text-lg text-[#B5B7B9]"
+                    className="text-lg text-[#B5B7B9] break-words truncate"
                     style={{ fontFamily: "jura" }}
                   >
-                    {item[Object.keys(item)[0]].description}
+                    {item.description}
                   </p>
                 </div>
               ))}
