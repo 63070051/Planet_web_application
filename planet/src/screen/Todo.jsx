@@ -31,30 +31,6 @@ const MONTH = [
   "December",
 ];
 
-function CheckBox(props) {
-  const [index, setIndex] = useState(props.index);
-  const [checked, setChecked] = useState(false);
-  return (
-    <div className="border-t flex justify-between items-center px-6 py-3">
-      <div
-        className="flex space-x-4 items-center"
-        onClick={() => {
-          setChecked(!checked);
-        }}
-      >
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={() => {}}
-          className="w-4 h-4 border-gray-300 rounded accent-[#FFAA9B]"
-        />
-        <p style={{ fontFamily: "jura" }}>{props.text}</p>
-      </div>
-      <img src={Minus} alt="" />
-    </div>
-  );
-}
-
 function TodoList() {
   const [focus, setFocus] = useState(new Date().getDate());
   const [focusMonth, setFocusMonth] = useState(MONTH[new Date().getMonth()]);
@@ -90,6 +66,32 @@ function TodoList() {
         console.log(e);
       });
   }, []);
+
+  function CheckBox(props) {
+    const [index, setIndex] = useState(props.index);
+    const [checked, setChecked] = useState(props.item.status);
+    return (
+      <div className="border-t flex justify-between items-center px-6 py-3">
+        <div
+          className="flex space-x-4 items-center"
+          onClick={() => {
+            setChecked(!checked);
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={() => {
+              UpdateStatus(index, !checked);
+            }}
+            className="w-4 h-4 border-gray-300 rounded accent-[#FFAA9B]"
+          />
+          <p style={{ fontFamily: "jura" }}>{props.item.todo}</p>
+        </div>
+        <img src={Minus} alt="" />
+      </div>
+    );
+  }
 
   function ChangeTaskDay(day) {
     console.log(day, focusMonth);
@@ -158,6 +160,22 @@ function TodoList() {
         </p>
       </div>
     );
+  }
+
+  function UpdateStatus(index, status) {
+    axios
+      .post(`${path}/updatetodostatus`, {
+        id: localStorage.getItem("id"),
+        month: focusMonth,
+        day: focus,
+        index: index,
+        status: status,
+      })
+      .then(() => {
+      })
+      .catch(() => {
+        console.log(err);
+      });
   }
 
   function Body() {
@@ -259,7 +277,7 @@ function TodoList() {
             <div className="overflow-y-auto h-[55vh]">
               {myTask &&
                 myTask.map((value, index) => {
-                  return <CheckBox text={value} key={index} index={index} />;
+                  return <CheckBox item={value} key={index} index={index} />;
                 })}
             </div>
           </div>
