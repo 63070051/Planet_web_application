@@ -16,9 +16,36 @@ export default function Allnotes() {
         setData(res.data);
       })
       .catch((err) => {
-        console.log9(err);
+        console.log(err);
       });
   }, []);
+
+  function RenderNote(props) {
+    const myObj = {
+      index : props.index
+    }
+    return (
+      <Link to="/note" state={myObj} className="h-[10rem] flex flex-col justify-between rounded border-[#D9DADA] border-2  p-4">
+        <div>
+          <p className="text-5xl text-[#8A97A0]" style={{ fontFamily: "jura" }}>
+            {props.index + 1 < 10 ? "0" + (props.index + 1) : props.index + 1}
+          </p>
+          <p
+            className="text-lg font-semibold text-[#00213F]"
+            style={{ fontFamily: "jura" }}
+          >
+            {props.item.topic}
+          </p>
+        </div>
+        <p
+          className="text-lg text-[#B5B7B9] break-words truncate"
+          style={{ fontFamily: "jura" }}
+        >
+          {props.item.description}
+        </p>
+      </Link>
+    );
+  }
 
   return (
     <div className="h-screen">
@@ -58,33 +85,10 @@ export default function Allnotes() {
               id="albumNote"
               className="overflow-scroll overflow-x-hidden h-[38rem] grid grid-cols-2 lg:grid-cols-3 gap-6 p-8 "
             >
-              {data && data.map((item, index) => (
-                <div
-                  key={index}
-                  className="h-[10rem] flex flex-col justify-between rounded border-[#D9DADA] border-2  p-4"
-                >
-                  <div>
-                    <p
-                      className="text-5xl text-[#8A97A0]"
-                      style={{ fontFamily: "jura" }}
-                    >
-                      {index+1}
-                    </p>
-                    <p
-                      className="text-lg font-semibold text-[#00213F]"
-                      style={{ fontFamily: "jura" }}
-                    >
-                      {item.topic}
-                    </p>
-                  </div>
-                  <p
-                    className="text-lg text-[#B5B7B9] break-words truncate"
-                    style={{ fontFamily: "jura" }}
-                  >
-                    {item.description}
-                  </p>
-                </div>
-              ))}
+              {data &&
+                data.map((item, index) => (
+                  <RenderNote item={item} index={index} key={index} />
+                ))}
             </div>
           </div>
         </div>
