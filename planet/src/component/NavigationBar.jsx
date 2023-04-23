@@ -24,9 +24,9 @@ const LinkTo = [
     text: "NOTES",
   },
   {
-    link: "/Accounts",
+    link: "/Profile",
     src: Account,
-    text: "Account",
+    text: "Profile",
   },
   {
     link: "/Setting",
