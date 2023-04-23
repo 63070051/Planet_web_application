@@ -9,6 +9,7 @@ import "../fonts/Kumbh_Sans/static/KumbhSans-Regular.ttf";
 import "../fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import path from "../../path";
 
 function Note() {
   const [edit, setEdit] = useState(false);
@@ -17,7 +18,7 @@ function Note() {
   const myNote = location.state;
   const [description, setDescription] = useState();
   const [topic, setTopic] = useState();
-
+  const [user, setUser] = useState();
   function UpdateNote() {
     axios
       .post(
@@ -46,14 +47,24 @@ function Note() {
         }
       )
       .then((res) => {
-        setDescription(res.data.description)
-        setTopic(res.data.topic)
+        setDescription(res.data.description);
+        setTopic(res.data.topic);
       })
       .catch((err) => {
         console.log(err);
       });
+    GetUser();
   }, []);
-
+  function GetUser() {
+    axios
+      .post(`${path}/user`, { id: localStorage.getItem("id") })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   return (
     <div className="selcet-none" style={{ backgroundColor: "#EFEADE" }}>
       <div
@@ -64,23 +75,25 @@ function Note() {
         <NavigationBar />
 
         <div className="col-span-4 px-2 pt-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                Welcome back, Kwanpf
-              </p>
-              <p
-                className="text-xl"
-                style={{ fontFamily: "Kumbh_Sans_Regular" }}
-              >
-                What’s Up Today?
-              </p>
+          {user && (
+            <div className="flex justify-between items-center h-[15%]">
+              <div>
+                <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+                  Welcome back, {user.firstname + " " + user.lastname}
+                </p>
+                <p
+                  className="text-xl"
+                  style={{ fontFamily: "Kumbh_Sans_Regular" }}
+                >
+                  What’s Up Today?
+                </p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <img className="w-10" src={Notification} alt="" />
+                <img className="w-10" src={Profile} alt="" />
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <img className="w-10" src={Notification} alt="" />
-              <img className="w-10" src={Profile} alt="" />
-            </div>
-          </div>
+          )}
 
           {/* Note */}
           <div

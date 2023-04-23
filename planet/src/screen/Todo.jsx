@@ -43,6 +43,7 @@ function TodoList() {
   const [myTodo, setMyTodo] = useState();
   const [create, setCreate] = useState(false);
   const [newTodo, setNewTodo] = useState("");
+  const [user, setUser] = useState();
   useEffect(() => {
     axios
       .post(`${path}/calendar`, { id: localStorage.getItem("id") })
@@ -67,7 +68,19 @@ function TodoList() {
       .catch((e) => {
         console.log(e);
       });
+    GetUser();
   }, []);
+
+  function GetUser() {
+    axios
+      .post(`${path}/user`, { id: localStorage.getItem("id") })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   function CheckBox(props) {
     const [index, setIndex] = useState(props.index);
@@ -187,14 +200,14 @@ function TodoList() {
       todo: newTodo,
       status: false,
     };
-    let array = myTodo
+    let array = myTodo;
     array.push(setTodo);
     axios
       .put(`${path}/mytodo`, {
         id: localStorage.getItem("id"),
         month: focusMonth,
         day: focus,
-        todo: {userTodo : array},
+        todo: { userTodo: array },
       })
       .then((res) => {
         if (res.data == "successfully") {
@@ -219,23 +232,25 @@ function TodoList() {
         <NavigationBar />
         {/* // Todo Body */}
         <div className="col-span-3 px-2 pt-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                Welcome back, Kwanpf
-              </p>
-              <p
-                className="text-xl"
-                style={{ fontFamily: "Kumbh_Sans_Regular" }}
-              >
-                What’s Up Today?
-              </p>
+          {user && (
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+                  Welcome back, {user.firstname + " " + user.lastname}
+                </p>
+                <p
+                  className="text-xl"
+                  style={{ fontFamily: "Kumbh_Sans_Regular" }}
+                >
+                  What’s Up Today?
+                </p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <img className="w-10" src={Notification} alt="" />
+                <img className="w-10" src={Profile} alt="" />
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <img className="w-10" src={Notification} alt="" />
-              <img className="w-10" src={Profile} alt="" />
-            </div>
-          </div>
+          )}
           <div
             className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85.5vh]"
             style={{ backgroundColor: "#FBF7F0" }}

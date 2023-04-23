@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import Logo from "../assets/logo.svg";
 import Background from "../assets/background_logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import path from "../../path";
 import axios from "axios";
 import md5 from "md5";
+
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const router = useNavigate();
   function SignIn() {
     axios
       .post(`${path}/login-user`, {email : email, password : md5(password)})
@@ -18,7 +19,7 @@ function Login(props) {
         }
         else{
           localStorage.setItem("id", res.data.Items[0].id)
-          window.location.replace("Dashboard");
+          router('/Dashboard')
         }
       })
       .catch((e) => {

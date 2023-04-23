@@ -15,6 +15,7 @@ import path from "../../path";
 function Dashboard(props) {
   const [myTodo, setMyTodo] = useState();
   const [myNote, setMyNote] = useState();
+  const [user, setUser] = useState();
   const MONTH = [
     "January",
     "Febuary",
@@ -44,7 +45,7 @@ function Dashboard(props) {
       .catch((e) => {
         console.log(e);
       });
-      axios
+    axios
       .post(`${path}/mynote`, { id: localStorage.getItem("id") })
       .then((res) => {
         setMyNote(res.data);
@@ -52,8 +53,18 @@ function Dashboard(props) {
       .catch((err) => {
         console.log(err);
       });
+    GetUser();
   }, []);
-
+  function GetUser() {
+    axios
+      .post(`${path}/user`, { id: localStorage.getItem("id") })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   function CheckBox(props) {
     const [index, setIndex] = useState(props.index);
     const [checked, setChecked] = useState(false);
@@ -78,13 +89,13 @@ function Dashboard(props) {
     );
   }
 
-  function RenderNote(props){
-    return(
+  function RenderNote(props) {
+    return (
       <div className="flex items-center justify-between">
         <p>{props.item.topic}</p>
         <img src="" alt="" />
       </div>
-    )
+    );
   }
 
   return (
@@ -98,23 +109,25 @@ function Dashboard(props) {
         <NavigationBar />
         {/* // Todo Body */}
         <div className="col-span-4 px-4 h-full">
-          <div className="flex justify-between items-center h-[15%]">
-            <div>
-              <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                Welcome back, Kwanpf
-              </p>
-              <p
-                className="text-xl"
-                style={{ fontFamily: "Kumbh_Sans_Regular" }}
-              >
-                What’s Up Today?
-              </p>
+          {user && (
+            <div className="flex justify-between items-center h-[15%]">
+              <div>
+                <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+                  Welcome back, {user.firstname + " " + user.lastname}
+                </p>
+                <p
+                  className="text-xl"
+                  style={{ fontFamily: "Kumbh_Sans_Regular" }}
+                >
+                  What’s Up Today?
+                </p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <img className="w-10" src={Notification} alt="" />
+                <img className="w-10" src={Profile} alt="" />
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <img className="w-10" src={Notification} alt="" />
-              <img className="w-10" src={Profile} alt="" />
-            </div>
-          </div>
+          )}
           {/* graph */}
           <div
             className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4 h-[35%] sm:h-[30%] rounded-2xl relative"
@@ -213,9 +226,12 @@ function Dashboard(props) {
                   <img className="w-6" src={Plus} alt="" />
                 </div>
                 <div className="overflow-y-auto h-[150px] sm:h-[360px]">
-                  {myTodo && myTodo.map((value, index) => {
-                    return <CheckBox text={value} key={index} index={index} />;
-                  })}
+                  {myTodo &&
+                    myTodo.map((value, index) => {
+                      return (
+                        <CheckBox text={value} key={index} index={index} />
+                      );
+                    })}
                 </div>
               </div>
             </div>
@@ -229,9 +245,10 @@ function Dashboard(props) {
                   <img className="w-6" src={Plus} alt="" />
                 </div>
                 <div className="overflow-y-scroll h-[150px]  sm:h-[360px]">
-                  {myNote && myNote.map((value, index) => {
-                    // return <CheckBox text={value} key={index} index={index} />;
-                  })}
+                  {myNote &&
+                    myNote.map((value, index) => {
+                      // return <CheckBox text={value} key={index} index={index} />;
+                    })}
                 </div>
               </div>
             </div>

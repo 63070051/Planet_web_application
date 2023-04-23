@@ -5,15 +5,16 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import path from "../../path";
 import md5 from "md5";
+import { useNavigate } from "react-router-dom";
 function Signup(props) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [password_c, setPassword_C] = useState("");
-
+  const router = useNavigate();
   function AddUser() {
-    let [firstname, lastname] = fullName.split(" "); 
+    let [firstname, lastname] = fullName.split(" ");
     if (password == password_c) {
       axios
         .post(`${path}/register`, {
@@ -24,10 +25,12 @@ function Signup(props) {
           password: md5(password),
         })
         .then((res) => {
-          if(res.data == "successfully"){
-            window.location.replace("/login");
+          if (res.data == "successfully") {
+            router("/login");
           }
-          console.log(res.data)
+          else{
+            alert(res.data)
+          }
         })
         .catch((e) => {
           console.log(e);
