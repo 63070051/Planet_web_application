@@ -1,1 +1,0 @@
-export default "https://2a4ce4nw26.execute-api.us-east-1.amazonaws.com/Dev";

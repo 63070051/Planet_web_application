@@ -1,7 +1,0 @@
-#albumNote::-webkit-scrollbar {
-    width: 10px;
-  }
-#albumNote::-webkit-scrollbar-thumb {
-    background-color: #d0c3b1;
-    border-radius: 100px;
-  }
