@@ -19,14 +19,14 @@ const LinkTo = [
     text: "TO DO LIST",
   },
   {
-    link: "/Note",
+    link: "/AllNotes",
     src: Notes,
     text: "NOTES",
   },
   {
-    link: "/Accounts",
+    link: "/Profile",
     src: Account,
-    text: "Account",
+    text: "Profile",
   },
   {
     link: "/Setting",
@@ -54,7 +54,10 @@ function LinkNav(props) {
 
 function NavigationBar() {
   return (
-    <div style={{ backgroundColor: "#FBF7F0" }} className="col-span-1 hidden lg:block">
+    <div
+      style={{ backgroundColor: "#FBF7F0" }}
+      className="col-span-1 hidden lg:block"
+    >
       <div
         className="space-x-4 p-10"
         style={{

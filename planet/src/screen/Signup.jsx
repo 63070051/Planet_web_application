@@ -1,10 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "../assets/logo.svg";
 import Background from "../assets/background_logo.svg";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import path from "../../path";
+import md5 from "md5";
+import { useNavigate } from "react-router-dom";
 function Signup(props) {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [password_c, setPassword_C] = useState("");
+  const router = useNavigate();
+  function AddUser() {
+    let [firstname, lastname] = fullName.split(" ");
+    if (password == password_c) {
+      axios
+        .post(`${path}/register`, {
+          firstname: firstname,
+          lastname: lastname,
+          email: email,
+          phone: phone,
+          password: md5(password),
+        })
+        .then((res) => {
+          if (res.data == "successfully") {
+            router("/login");
+          }
+          else{
+            alert(res.data)
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  }
+
   return (
-    <div style={{ backgroundColor: "#FBF7F0" }} className="flex justify-between">
+    <div
+      style={{ backgroundColor: "#FBF7F0" }}
+      className="flex justify-between"
+    >
       <div className="w-full sm:w-2/3 flex justify-center items-center relative min-h-screen">
         <div>
           <div className="flex">
@@ -24,49 +62,41 @@ function Signup(props) {
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="username"
                   type="text"
-                  // placeholder="Username"
+                  onChange={(e) => {
+                    setFullName(e.target.value);
+                  }}
                 />
               </div>
               <div>
                 <label
                   className="block text-gray-400 text-sm mb-2"
-                  htmlFor="username"
+                  htmlFor="email"
                 >
                   Email
                 </label>
                 <input
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="username"
+                  id="email"
                   type="text"
-                  // placeholder="Username"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
                 />
               </div>
               <div>
                 <label
                   className="block text-gray-400 text-sm mb-2"
-                  htmlFor="username"
+                  htmlFor="phone"
                 >
                   Phone number
                 </label>
                 <input
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="username"
+                  id="phone"
                   type="text"
-                  // placeholder="Username"
-                />
-              </div>
-              <div>
-                <label
-                  className="block text-gray-400 text-sm mb-2"
-                  htmlFor="username"
-                >
-                  Password
-                </label>
-                <input
-                  className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="username"
-                  type="text"
-                  // placeholder="Username"
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                  }}
                 />
               </div>
               <div>
@@ -74,21 +104,42 @@ function Signup(props) {
                   className="block text-gray-400 text-sm mb-2"
                   htmlFor="password"
                 >
-                  Confirm Password
+                  Password
                 </label>
                 <input
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="password"
                   type="password"
-                  // placeholder="Username"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                />
+              </div>
+              <div>
+                <label
+                  className="block text-gray-400 text-sm mb-2"
+                  htmlFor="password1"
+                >
+                  Confirm Password
+                </label>
+                <input
+                  className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="password1"
+                  type="password"
+                  onChange={(e) => {
+                    setPassword_C(e.target.value);
+                  }}
                 />
               </div>
               <div className="space-y-4">
                 <button
+                  onClick={() => {
+                    AddUser();
+                  }}
                   style={{ backgroundColor: "#F08D6E" }}
                   className="text-sm px-4 py-1 w-full rounded-sm mt-3"
                 >
-                  LOGIN
+                  Sign Up
                 </button>
                 <div className="flex justify-center items-center">
                   <Link className="text-gray-400 text-sm text-center duration-500 hover:text-red-600">
@@ -99,9 +150,9 @@ function Signup(props) {
             </div>
           </div>
           <p className="text-sm mt-12 text-center">
-          Already have any account?{" "}
+            Already have any account?{" "}
             <Link to="/Login" style={{ color: "#E5725D" }}>
-            SIGN IN
+              SIGN IN
             </Link>
           </p>
         </div>
