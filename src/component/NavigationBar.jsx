@@ -19,6 +19,11 @@ const LinkTo = [
     text: "TO DO LIST",
   },
   {
+    link: "/Setting",
+    src: Setting,
+    text: "Tasks",
+  },
+  {
     link: "/AllNotes",
     src: Notes,
     text: "NOTES",
@@ -28,11 +33,7 @@ const LinkTo = [
     src: Account,
     text: "Profile",
   },
-  {
-    link: "/Setting",
-    src: Setting,
-    text: "Setting",
-  },
+  
 ];
 
 function LinkNav(props) {
