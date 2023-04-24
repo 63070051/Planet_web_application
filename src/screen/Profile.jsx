@@ -5,6 +5,7 @@ import axios from "axios";
 import path from "../../path";
 import md5 from "md5";
 
+
 export default function Profile() {
   const [user, setUser] = useState();
   const [edit, setEdit] = useState(true);
@@ -135,6 +136,11 @@ export default function Profile() {
                         EDIT
                       </button>
                     )}
+                    <button
+                        className="logout text-sm px-4 py-1 w-full rounded-sm mt-3 text-white  bg-[#F08D6E]"
+                      >
+                        LOGOUT
+                      </button>
                     {!edit && (
                       <div className="grid grid-cols-2 gap-4">
                         <button
@@ -143,6 +149,7 @@ export default function Profile() {
                             setFirstName(user.firstname);
                             setLastName(user.lastname);
                             setPassword(user.password);
+                            document.querySelector('.logout').style.display = "none";
                           }}
                           className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#F08D6E] border-2 text-[#F08D6E]"
                         >
