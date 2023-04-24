@@ -34,3 +34,8 @@
 .font-jockey{
     font-family: "jockey";
 }
+.bg-project{
+    background-image: url(./assets/bg_project_task.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
