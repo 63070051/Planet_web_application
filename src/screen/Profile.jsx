@@ -12,6 +12,21 @@ export default function Profile() {
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
   const [password, setPassword] = useState("");
+  const [images, setImages] = useState([]);
+  const [imageURLs, setImageURLs] = useState([]);
+  function Preview_Img(img) {
+    if (img.length < 1) return;
+    const newImageUrls = [];
+    img.forEach((image) => newImageUrls.push(URL.createObjectURL(image)));
+    setImageURLs(newImageUrls);
+  }
+  function onImageChange(e) {
+    setImages([...e.target.files]);
+    Preview_Img([...e.target.files]);
+  }
+
+  console.log("Images : ", images);
+  // console.log("imageURLs : ", imageURLs);
 
   function UpdateUser() {
     if (confirm("Are you sure update profile")) {
@@ -67,7 +82,31 @@ export default function Profile() {
             >
               Profile
             </p>
-            <img src={User} width={100} alt="" />
+            {!edit && (
+              <input
+                type="file"
+                className="hidden"
+                multiple
+                id="file-img"
+                accept="image/*"
+                onChange={onImageChange}
+              />
+            )}
+            <label htmlFor="file-img">
+              {imageURLs.length ? (
+                imageURLs.map((imageSrc, idx) => {
+                  return (
+                    <img
+                      className="rounded-full h-[150px] w-[150px] object-cover"
+                      key={idx}
+                      src={imageSrc}
+                    />
+                  );
+                })
+              ) : (
+                <img src={User} width={150} alt="" />
+              )}
+            </label>
             {user && (
               <div className="space-y-8 w-72">
                 <div className="space-y-3">
@@ -149,7 +188,6 @@ export default function Profile() {
                             setFirstName(user.firstname);
                             setLastName(user.lastname);
                             setPassword(user.password);
-                            document.querySelector('.logout').style.display = "none";
                           }}
                           className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#F08D6E] border-2 text-[#F08D6E]"
                         >

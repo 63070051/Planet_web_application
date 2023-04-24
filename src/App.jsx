@@ -9,6 +9,8 @@ import Forgot from "./screen/Forgot";
 import Allnotes from "./screen/Allnotes";
 import Profile from "./screen/Profile";
 import Note from "./screen/Note";
+import Task from "./screen/Task";
+import Project_task from "./screen/Project_task";
 import { RequireAuth } from "./auth/requireAuth";
 
 function App() {
@@ -55,6 +57,22 @@ function App() {
             element={
               <RequireAuth>
                 <Note />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/Task"
+            element={
+              <RequireAuth>
+                <Task />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/Project_task"
+            element={
+              <RequireAuth>
+                <Project_task />
               </RequireAuth>
             }
           />
