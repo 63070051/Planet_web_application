@@ -9,6 +9,7 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import Column from "../component/Column";
 import axios from "axios";
 import path from "../../path";
+import DonutChart from "../component/DonutChart";
 
 function Project_task() {
   const [state, setState] = useState();
@@ -41,7 +42,7 @@ function Project_task() {
     axios
       .post(`${path}/updatetask`, {
         id: localStorage.getItem("id"),
-        project : "project1",
+        project: "project1",
         task: task,
       })
       .then((res) => {
@@ -131,8 +132,8 @@ function Project_task() {
           {/* // Navigation Bar */}
           <NavigationBar />
           {/* // Todo Body */}
-          <div className="col-span-4 px-4 mx-10 h-full">
-            <div className="flex justify-between items-center h-[15%]">
+          <div className="col-span-4 px-4 mx-10 h-full ">
+            <div className="flex justify-between items-center h-[15%] ">
               <div>
                 <p className="text-2xl" style={{ fontFamily: "jockey" }}>
                   Welcome back, Kwanpf
@@ -149,15 +150,91 @@ function Project_task() {
                 <img className="w-10" src={Profile} alt="" />
               </div>
             </div>
-            <div
-              className="h-[35%] sm:h-[80%] rounded-2xl relative pt-8 px-8 pb-6"
-              style={{ backgroundColor: "#FBF7F0" }}
-            >
-              <p className="font-jockey text-2xl">My Task</p>
+            <div className="">
               <div
-                className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4 mt-10 relative"
+                className="flex justify-between h-[35%] sm:h-[30%] rounded-2xl relative "
                 style={{ backgroundColor: "#FBF7F0" }}
               >
+                <div className="rounded-2xl cols-span-1 flex items-center justify-center">
+                  <div className="text-center">
+                    <p
+                      className="text-7xl"
+                      style={{ color: "#75C9A8", fontFamily: "jockey" }}
+                    >
+                      43%
+                    </p>
+                    <p
+                      className="text-xl"
+                      style={{ color: "#B5B7B9", fontFamily: "jockey" }}
+                    >
+                      Completed Tasks
+                    </p>
+                    <button type="submit" className="bg-transparent border-2 text-[#E5725D] border-[#F08D6E] rounded-sm text-sm px-6 py-2">ADD TO DO</button>
+                  </div>
+                </div>
+                <div className="h-full sm:flex items-center justify-center hidden ">
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex space-x-3 items-center">
+                        <div className="w-5 h-5 rounded-full bg-[#FFAA9B]"></div>
+                        <p
+                          className="text-2xl font-light"
+                          style={{ fontFamily: "jockey" }}
+                        >
+                          TO DO
+                        </p>
+                      </div>
+                      <p
+                        style={{ fontFamily: "jura" }}
+                        className="ml-8 text-sm text-gray-400"
+                      >
+                        4 tasks now
+                      </p>
+                    </div>
+                    <div>
+                      <div className="flex space-x-3 items-center">
+                        <div className="w-5 h-5 rounded-full bg-[#CFCFAB]"></div>
+                        <p
+                          className="text-2xl font-light"
+                          style={{ fontFamily: "jockey" }}
+                        >
+                          IN PROGRESS
+                        </p>
+                      </div>
+                      <p
+                        style={{ fontFamily: "jura" }}
+                        className="text-sm text-gray-400 ml-8"
+                      >
+                        1 tasks now
+                      </p>
+                    </div>
+                    <div>
+                      <div className="flex space-x-3 items-center">
+                        <div className="w-5 h-5 rounded-full bg-[#75C9A8]"></div>
+                        <p
+                          className="text-2xl font-light"
+                          style={{ fontFamily: "jockey" }}
+                        >
+                          DONE
+                        </p>
+                      </div>
+                      <p
+                        style={{ fontFamily: "jura" }}
+                        className="ml-8 text-sm text-gray-400"
+                      >
+                        2 completed
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center">
+                  <div className="w-[120px] sm:w-[200px] relative">
+                    <DonutChart />
+                  </div>
+                  {/* <div className="w" style={}></div> */}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4 mt-10 relative">
                 {state &&
                   state.columnOrder.map((columnId) => {
                     const columns = state.columns[columnId];

@@ -14,6 +14,7 @@ export default function Profile() {
   const [password, setPassword] = useState("");
   const [images, setImages] = useState([]);
   const [imageURLs, setImageURLs] = useState([]);
+  const [logout, setLogout] = useState(true);
   function Preview_Img(img) {
     if (img.length < 1) return;
     const newImageUrls = [];
@@ -167,19 +168,22 @@ export default function Profile() {
                   <div className="space-y-4">
                     {edit && (
                       <button
+
                         onClick={() => {
                           setEdit(!edit);
+                          setLogout(false)
                         }}
                         className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#146C94] border-2 text-[#146C94]"
                       >
                         EDIT
                       </button>
                     )}
-                    <button
+                    {logout&&<button
+                    
                         className="logout text-sm px-4 py-1 w-full rounded-sm mt-3 text-white  bg-[#F08D6E]"
                       >
                         LOGOUT
-                      </button>
+                      </button>}
                     {!edit && (
                       <div className="grid grid-cols-2 gap-4">
                         <button
@@ -188,6 +192,7 @@ export default function Profile() {
                             setFirstName(user.firstname);
                             setLastName(user.lastname);
                             setPassword(user.password);
+                            setLogout(true)
                           }}
                           className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#F08D6E] border-2 text-[#F08D6E]"
                         >
@@ -195,6 +200,7 @@ export default function Profile() {
                         </button>
                         <button
                           onClick={() => {
+                            setLogout(true)
                             UpdateUser();
                           }}
                           className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#569DAA] border-2 text-[#569DAA]"
