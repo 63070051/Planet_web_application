@@ -22,3 +22,15 @@
     font-family: "jura";
     src: local("Jura"), url("./fonts/Jura/static/Jura-Medium.ttf") format("truetype");
 }
+.font-jura{
+    font-family: "jura";
+}
+.font-kumbh{
+    font-family: "Kumbh_Sans_Regular";
+}
+.font-jetbranins{
+    font-family: "jetbrains_valiable";
+}
+.font-jockey{
+    font-family: "jockey";
+}
