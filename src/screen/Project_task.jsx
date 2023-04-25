@@ -11,7 +11,7 @@ import axios from "axios";
 import path from "../../path";
 import DonutChart from "../component/DonutChart";
 import bgProject from "../assets/bg_project_task.png";
-import addTodo from "../assets/addTodo.svg";
+import addTodo from "../assets/addTodo.png";
 function Project_task() {
   const [state, setState] = useState();
   const [modal, setModal] = useState(false);
@@ -55,10 +55,10 @@ function Project_task() {
       });
   }
 
-  useEffect(() => {
-    GetTask();
-    GetUser();
-  }, []);
+  // useEffect(() => {
+  //   GetTask();
+  //   GetUser();
+  // }, []);
   const onDragEnd = (result) => {
     const { destination, source } = result;
 
@@ -124,7 +124,7 @@ function Project_task() {
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    // <DragDropContext onDragEnd={onDragEnd}>
       <div className="select-none">
         {/* // Body Grid */}
         <div
@@ -144,10 +144,10 @@ function Project_task() {
               ></div>
               <div
                 id="modal-box"
-                className="w-[28rem] h-[18rem] rounded-2xl bg-[#FBF7F0] z-50"
+                className="w-[25rem] h-[17rem] rounded-2xl bg-[#FBF7F0] z-50"
               >
-                <div className="flex flex-col justify-center items-center space-y-4">
-                  <img src={addTodo} alt="" />
+                <div className="flex flex-col justify-center items-center space-y-4 ">
+                  <img src={addTodo}  alt="" />
                   <div className="w-full flex justify-center">
                     <p className="font-jockey text-2xl mt-4">ADD TO DO</p>
                   </div>
@@ -201,7 +201,7 @@ function Project_task() {
                 style={{ backgroundColor: "#FBF7F0" }}
               >
                 {/* 43% */}
-                <div className="rounded-2xl cols-span-1 flex items-center justify-center ml-16 ">
+                <div className="rounded-2xl flex items-center justify-center ml-16 ">
                   <div className="text-center">
                     <p
                       className="text-7xl"
@@ -291,7 +291,7 @@ function Project_task() {
 
                   {/* <div className="w" style={}></div> */}
                 </div>
-                <div className="flex flex-col justify-end w-96  bg-project">
+                <div className="flex flex-col justify-end w-96 bg-project">
                   <div className="flex flex-col w-40">
                     <button
                       type="submit"
@@ -324,7 +324,7 @@ function Project_task() {
           </div>
         </div>
       </div>
-    </DragDropContext>
+    // </DragDropContext>
   );
 }
 
