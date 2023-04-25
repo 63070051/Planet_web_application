@@ -15,7 +15,7 @@ function Column({ column, task }) {
         <Droppable key={column.id} droppableId={column.id} index={column.id}>
           {(droppableProvided, droppableSnapshot) => (
             <div
-              className="overflow-y-auto h-[150px] sm:h-[420px] px-4 py-2 space-y-2"
+              className="overflow-y-auto h-[150px] sm:h-[280px] px-4 py-2 space-y-2"
               ref={droppableProvided.innerRef}
               {...droppableProvided.droppableProps}
             >

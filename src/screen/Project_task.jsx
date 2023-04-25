@@ -9,20 +9,34 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import Column from "../component/Column";
 import axios from "axios";
 import path from "../../path";
-import DonutChart from "../component/DonutChart";
+import DonutChartTask from "../component/DonutCharTaskPage";
 import bgProject from "../assets/bg_project_task.png";
 import addTodo from "../assets/addTodo.svg";
+import { useLocation } from "react-router-dom";
 function Project_task() {
   const [state, setState] = useState();
   const [modal, setModal] = useState(false);
   const [user, setUser] = useState();
+  const location = useLocation();
+  const [todo, setTodo] = useState();
+  const [inprogress, setInprogress] = useState();
+  const [done, setDone] = useState();
+  const obj = location.state;
+  if (obj == null) {
+    window.location.replace("/task");
+  }
   function GetTask() {
     axios
       .post(`${path}/mytask`, {
         id: localStorage.getItem("id"),
+        index: obj.index,
+        project: Object.keys(obj.task)[0],
       })
       .then((res) => {
         setState(res.data);
+        setDone(res.data.columns["column-3"].taskIds.length);
+        setInprogress(res.data.columns["column-2"].taskIds.length);
+        setTodo(res.data.columns["column-1"].taskIds.length);
       })
       .catch((err) => {
         console.log(err);
@@ -40,11 +54,11 @@ function Project_task() {
   }
 
   function UpdateTask(task) {
-    console.log(task);
     axios
       .post(`${path}/updatetask`, {
         id: localStorage.getItem("id"),
-        project: "project1",
+        index: obj.index,
+        project: Object.keys(obj.task)[0],
         task: task,
       })
       .then((res) => {
@@ -120,6 +134,9 @@ function Project_task() {
     };
 
     setState(newState);
+    setDone(newState.columns["column-3"].taskIds.length);
+    setInprogress(newState.columns["column-2"].taskIds.length);
+    setTodo(newState.columns["column-1"].taskIds.length);
     UpdateTask(newState);
   };
 
@@ -207,7 +224,7 @@ function Project_task() {
                       className="text-7xl"
                       style={{ color: "#75C9A8", fontFamily: "jockey" }}
                     >
-                      43%
+                      {parseInt((100 / (todo + inprogress + done)) * done)}%
                     </p>
                     <p
                       className="text-xl"
@@ -244,7 +261,7 @@ function Project_task() {
                         style={{ fontFamily: "jura" }}
                         className="ml-8 text-sm text-gray-400"
                       >
-                        4 tasks now
+                        {todo} tasks now
                       </p>
                     </div>
                     <div>
@@ -261,7 +278,7 @@ function Project_task() {
                         style={{ fontFamily: "jura" }}
                         className="text-sm text-gray-400 ml-8"
                       >
-                        1 tasks now
+                        {inprogress} tasks now
                       </p>
                     </div>
                     <div>
@@ -278,7 +295,7 @@ function Project_task() {
                         style={{ fontFamily: "jura" }}
                         className="ml-8 text-sm text-gray-400"
                       >
-                        2 completed
+                        {done} completed
                       </p>
                     </div>
                   </div>
@@ -286,7 +303,7 @@ function Project_task() {
 
                 <div className="flex items-center justify-center relative">
                   <div className="w-[120px] sm:w-[200px] relative">
-                    <DonutChart />
+                    {state && <DonutChartTask task={state} index={0} />}
                   </div>
 
                   {/* <div className="w" style={}></div> */}
