@@ -12,11 +12,18 @@ import { Link } from "react-router-dom";
 import addTask from "../assets/bgAddTask.png";
 import circleTask from "../assets/circle_task.svg";
 import triangle from "../assets/triangle-noti.svg";
+import Loading from "../component/Loading";
+
 function RenderTask({ task, index }) {
   let todo = task[Object.keys(task)].columns["column-1"].taskIds.length;
   let inprogress = task[Object.keys(task)].columns["column-2"].taskIds.length;
   let done = task[Object.keys(task)].columns["column-3"].taskIds.length;
-  let cal = 100 / (todo + inprogress + done);
+  let cal;
+  if ((todo == 0 && inprogress == 0) || done == 0) {
+    cal = 0;
+  } else {
+    cal = 100 / (todo + inprogress + done);
+  }
 
   const [percent, setPercent] = useState(parseInt(done * cal) + "%");
   const myObj = {
@@ -59,7 +66,7 @@ function RenderTask({ task, index }) {
         >
           {percent}
         </p>
-        <DonutChartTask task={task[Object.keys(task)]} />
+        <DonutChartTask task={task[Object.keys(task)]} cutout={"70%"} />
       </div>
     </Link>
   );
@@ -71,6 +78,11 @@ function Task() {
   const [date, setDate] = useState("");
   const dateInputRef = useRef(null);
   const [popup, setPopup] = useState(false);
+  const [load, setLoad] = useState(false);
+  const [percent, setPercent] = useState(0);
+  const [user, setUser] = useState();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   function RenderNotification() {
     if (popup) {
       return (
@@ -109,7 +121,9 @@ function Task() {
                   <img src={circleTask} alt="" />
                   <div id="detail-notification" className="">
                     <p className="font-jockey text-lg uppercase">todo list</p>
-                    <span className="font-jura text-[#8a97a0]">4 tasks now</span>
+                    <span className="font-jura text-[#8a97a0]">
+                      4 tasks now
+                    </span>
                   </div>
                 </div>
                 <button
@@ -128,15 +142,14 @@ function Task() {
       return (
         <div className="flex items-center space-x-4 relative">
           <div className="w-14 h-14 rounded-xl flex justify-center items-center">
-
-          <img
-            className="w-10"
-            src={Notification}
-            onClick={() => {
-              setPopup(!popup);
-            }}
-            alt=""
-          />
+            <img
+              className="w-10"
+              src={Notification}
+              onClick={() => {
+                setPopup(!popup);
+              }}
+              alt=""
+            />
           </div>
           <img className="w-10" src={Profile} alt="" />
         </div>
@@ -145,119 +158,200 @@ function Task() {
   }
   const handleChange = (e) => {
     setDate(e.target.value);
+    console.log(e.target.value);
   };
+  function AddTask() {
+    const newTask = {};
+    const myObj = {};
+    let array = [];
+    myObj["id"] = localStorage.getItem("id");
+    newTask[title] = {
+      columnOrder: ["column-1", "column-2", "column-3"],
+      columns: {
+        "column-1": {
+          id: "column-1",
+          taskIds: [],
+          title: "TO-DO",
+        },
+        "column-2": {
+          id: "column-2",
+          taskIds: [],
+          title: "IN-PROGRESS",
+        },
+        "column-3": {
+          id: "column-3",
+          taskIds: [],
+          title: "COMPLETED",
+        },
+      },
+      tasks: {},
+      date: date,
+      description: description,
+    };
+    myObj["task"] = newTask;
+    axios
+      .put(`${path}/mytask`, myObj)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
+
   function GetAllTask() {
     axios
-      .post(`${path}/getalltask`, { id: localStorage.getItem("id") })
+      .post(
+        `${path}/getalltask`,
+        { id: localStorage.getItem("id") },
+        {
+          onDownloadProgress: (progressEvent) => {
+            let percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setPercent(percentCompleted);
+          },
+        }
+      )
       .then((res) => {
         setAllTask(res.data);
+        setTimeout(() => {
+          setLoad(true);
+        }, 400);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  function GetUser() {
+    axios
+      .post(
+        `${path}/user`,
+        { id: localStorage.getItem("id") },
+        {
+          onDownloadProgress: (progressEvent) => {
+            let percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setPercent(percentCompleted);
+          },
+        }
+      )
+      .then((res) => {
+        setUser(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }
   useEffect(() => {
+    GetUser();
     GetAllTask();
   }, []);
   return (
     <div className="select-none">
       {/* // Body Grid */}
-      <div
-        className="grid grid-cols-4 lg:grid-cols-5 min-h-screen pb-20 sm:pb-0"
-        style={{ backgroundColor: "#EFEADE" }}
-      >
-        {modal && (
-          <div
-            id="modal-review"
-            className="w-full h-screen flex justify-center items-center absolute z-40"
-          >
+      {load ? (
+        <div
+          className="grid grid-cols-4 lg:grid-cols-5 min-h-screen pb-20 sm:pb-0"
+          style={{ backgroundColor: "#EFEADE" }}
+        >
+          {modal && (
             <div
-              className="w-full h-full bg-[#6D6D68] absolute opacity-50"
-              onClick={() => {
-                setModal(false);
-              }}
-            ></div>
-            <div
-              id="modal-box"
-              className="w-[40rem] h-[28rem] rounded-2xl bg-[#FBF7F0] z-50"
+              id="modal-review"
+              className="w-full h-screen flex justify-center items-center absolute z-40"
             >
-              <div className="flex justify-center items-center  ">
-                <div className="w-full flex flex-col space-y-4 justify-center pl-9">
-                  <p className="font-jockey text-2xl mt-4">CREATE NEW TASK</p>
-                  <div className="flex flex-col">
-                    <label htmlFor="" className="text-gray-500">
-                      Title
-                    </label>
-                    <input
-                      type="text"
-                      className="w-4/5 p-1 border-2 border-gray-300 rounded bg-[#FBF7F0] outline-none"
-                    />
+              <div
+                className="w-full h-full bg-[#6D6D68] absolute opacity-50"
+                onClick={() => {
+                  setModal(false);
+                }}
+              ></div>
+              <div
+                id="modal-box"
+                className="w-[40rem] h-[28rem] rounded-2xl bg-[#FBF7F0] z-50"
+              >
+                <div className="flex justify-center items-center  ">
+                  <div className="w-full flex flex-col space-y-4 justify-center pl-9">
+                    <p className="font-jockey text-2xl mt-4">CREATE NEW TASK</p>
+                    <div className="flex flex-col">
+                      <label htmlFor="" className="text-gray-500">
+                        Title
+                      </label>
+                      <input
+                        onChange={(e) => {
+                          setTitle(e.target.value);
+                        }}
+                        type="text"
+                        className="w-4/5 p-1 border-2 border-gray-300 rounded bg-[#FBF7F0] outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label htmlFor="" className="text-gray-500">
+                        Description
+                      </label>
+                      <textarea
+                        onChange={(e) => {
+                          setDescription(e.target.value);
+                        }}
+                        type="text"
+                        className="w-4/5 h- p-1 border-2 border-gray-300 rounded bg-[#FBF7F0] outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label htmlFor="" className="text-gray-500">
+                        Dateline
+                      </label>
+                      <input
+                        type="date"
+                        onChange={handleChange}
+                        ref={dateInputRef}
+                        className="w-4/5 h- p-1 border-2 text-gray-500 border-gray-300 rounded bg-[#FBF7F0] outline-none"
+                      />
+                    </div>
+                    <div className="flex space-x-2 w-4/5">
+                      <button
+                        onClick={() => {
+                          setModal(false);
+                        }}
+                        className="border w-1/2 py-1 border-[#E5725D] text-[#E5725D] rounded-sm"
+                      >
+                        CANCLE
+                      </button>
+                      <button
+                        onClick={() => {
+                          setModal(false);
+                          AddTask();
+                        }}
+                        className="border w-1/2 py-1 bg-[#E5725D] text-white rounded-sm"
+                      >
+                        CREATE
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="" className="text-gray-500">
-                      Description
-                    </label>
-                    <textarea
-                      type="text"
-                      className="w-4/5 h- p-1 border-2 border-gray-300 rounded bg-[#FBF7F0] outline-none"
-                    />
+                  <div className="">
+                    <img src={addTask} width={307} alt="" />
                   </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="" className="text-gray-500">
-                      Dateline
-                    </label>
-                    <input
-                      type="date"
-                      onChange={handleChange}
-                      ref={dateInputRef}
-                      className="w-4/5 h- p-1 border-2 text-gray-500 border-gray-300 rounded bg-[#FBF7F0] outline-none"
-                    />
-  
-                  </div>
-                  <div className="flex space-x-2 w-4/5">
-                    <button
-                      onClick={() => {
-                        setModal(false);
-                      }}
-                      className="border w-1/2 py-1 border-[#E5725D] text-[#E5725D] rounded-sm"
-                    >
-                      CANCLE
-                    </button>
-                    <button
-                      onClick={() => {
-                        setModal(false);
-                      }}
-                      className="border w-1/2 py-1 bg-[#E5725D] text-white rounded-sm"
-                    >
-                      CREATE
-                    </button>
-                  </div>
-                </div>
-                <div className="">
-                  <img src={addTask} width={307} alt="" />
                 </div>
               </div>
             </div>
-          </div>
-        )}
-        {/* // Navigation Bar */}
-        <NavigationBar />
-        {/* // Todo Body */}
-        <div className="col-span-4 px-4 mx-10 h-full">
-          <div className="flex justify-between items-center h-[15%]">
-            <div>
-              <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                Welcome back, Kwanpf
-              </p>
-              <p
-                className="text-xl"
-                style={{ fontFamily: "Kumbh_Sans_Regular" }}
-              >
-                What’s Up Today?
-              </p>
-            </div>
-            <RenderNotification/>
-            {/* <div className="flex items-center space-x-4 relative z-20">
+          )}
+          {/* // Navigation Bar */}
+          <NavigationBar />
+          {/* // Todo Body */}
+          <div className="col-span-4 px-4 mx-10 h-full">
+            <div className="flex justify-between items-center h-[15%]">
+              <div>
+                <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+                  Welcome back, Kwanpf
+                </p>
+                <p
+                  className="text-xl"
+                  style={{ fontFamily: "Kumbh_Sans_Regular" }}
+                >
+                  What’s Up Today?
+                </p>
+              </div>
+              <RenderNotification />
+              {/* <div className="flex items-center space-x-4 relative z-20">
                 <img className="w-10" src={Notification} onClick={()=>{setPopup(!popup)}} alt="" />
                 {
                   popup &&
@@ -282,35 +376,38 @@ function Task() {
                 
                 <img className="w-10" src={Profile} alt="" />
               </div> */}
-          </div>
-          <div
-            className="h-[35%] sm:h-[80%] rounded-2xl relative pt-8 px-8 pb-6"
-            style={{ backgroundColor: "#FBF7F0" }}
-          >
-            <div className="flex justify-between">
-              <p className="font-jockey text-2xl">My Tasks</p>
-              <button
-                type="submit"
-                onClick={() => {
-                  setModal(true);
-                }}
-                className="h-7 px-8 rounded-md bg-[#F08D6E] font-jura font-bold text-sm text-white"
-              >
-                CREATE
-              </button>
             </div>
             <div
-              className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4 mt-10 relative"
+              className="h-[35%] sm:h-[80%] rounded-2xl relative pt-8 px-8 pb-6"
               style={{ backgroundColor: "#FBF7F0" }}
             >
-              {allTask &&
-                allTask.map((task, index) => (
-                  <RenderTask task={task} key={index} index={index} />
-                ))}
+              <div className="flex justify-between">
+                <p className="font-jockey text-2xl">My Tasks</p>
+                <button
+                  type="submit"
+                  onClick={() => {
+                    setModal(true);
+                  }}
+                  className="h-7 px-8 rounded-md bg-[#F08D6E] font-jura font-bold text-sm text-white"
+                >
+                  CREATE
+                </button>
+              </div>
+              <div
+                className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4 mt-10 relative"
+                style={{ backgroundColor: "#FBF7F0" }}
+              >
+                {allTask &&
+                  allTask.map((task, index) => (
+                    <RenderTask task={task} key={index} index={index} />
+                  ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <Loading percent={percent} />
+      )}
     </div>
   );
 }
