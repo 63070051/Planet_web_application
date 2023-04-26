@@ -23,13 +23,13 @@ function Signup(props) {
           email: email,
           phone: phone,
           password: md5(password),
+          focus: {},
         })
         .then((res) => {
           if (res.data == "successfully") {
             router("/login");
-          }
-          else{
-            alert(res.data)
+          } else {
+            alert(res.data);
           }
         })
         .catch((e) => {
