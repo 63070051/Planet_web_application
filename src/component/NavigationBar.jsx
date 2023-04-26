@@ -21,7 +21,7 @@ const LinkTo = [
   {
     link: "/task",
     src: Setting,
-    text: "Tasks",
+    text: "TASKS",
   },
   {
     link: "/AllNotes",

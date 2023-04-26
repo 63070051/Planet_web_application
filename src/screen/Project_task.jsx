@@ -11,14 +11,17 @@ import axios from "axios";
 import path from "../../path";
 import DonutChartTask from "../component/DonutCharTaskPage";
 import bgProject from "../assets/bg_project_task.png";
-import addTodo from "../assets/addTodo.svg";
+import addTodo from "../assets/addTodo.png";
 import { useLocation } from "react-router-dom";
+import Rater from 'react-rater'
+import 'react-rater/lib/react-rater.css'
 function Project_task() {
   const [state, setState] = useState();
   const [modal, setModal] = useState(false);
   const [user, setUser] = useState();
   const location = useLocation();
   const [todo, setTodo] = useState();
+  const [end, setEnd] = useState(false);
   const [inprogress, setInprogress] = useState();
   const [done, setDone] = useState();
   const obj = location.state;
@@ -161,15 +164,15 @@ function Project_task() {
               ></div>
               <div
                 id="modal-box"
-                className="w-[28rem] h-[18rem] rounded-2xl bg-[#FBF7F0] z-50"
+                className="w-[25rem] h-[16rem] rounded-2xl bg-[#FBF7F0] z-50"
               >
-                <div className="flex flex-col justify-center items-center space-y-4">
+                <div className="flex flex-col justify-center items-center space-y-4 ">
                   <img src={addTodo} alt="" />
-                  <div className="w-full flex justify-center">
-                    <p className="font-jockey text-2xl mt-4">ADD TO DO</p>
+                  <div className="w-4/5">
+                    <p className="font-jockey text-2xl mt-2">ADD YOUR TO DO</p>
                   </div>
-                  <input className="border w-2/3 h-9 outline-none p-3"></input>
-                  <div className="flex space-x-2 w-2/3">
+                  <input className="border-2 border-gray-300 rounded w-4/5 h-9 outline-none p-3 bg-[#FBF7F0]"></input>
+                  <div className="flex space-x-2 w-4/5">
                     <button
                       onClick={() => {
                         setModal(false);
@@ -191,6 +194,57 @@ function Project_task() {
               </div>
             </div>
           )}
+          {end && (
+            <div
+              id="modal-review"
+              className="w-full h-screen flex justify-center items-center absolute z-40"
+            >
+              <div
+                className="w-full h-full bg-[#6D6D68] absolute opacity-50"
+                onClick={() => {
+                  setEnd(false);
+                }}
+              ></div>
+              <div
+                id="modal-box"
+                className="w-[25rem] h-[22rem] rounded-2xl bg-[#FBF7F0] z-50"
+              >
+                <div className="flex flex-col justify-center items-center space-y-4 ">
+                  <img src={addTodo} alt="" />
+                  <div className="w-full flex  flex-col justify-center items-center">
+                    <p className="font-jockey text-2xl mt-4 tracking-wide">
+                      RATE YOUR PROJECT
+                    </p>
+                    <p className="font-kumbh tracking-wider">Cloud Project</p>
+                  </div>
+                  <Rater className=
+                  "flex pb-4" onRate={({rating}) => {console.log(rating)}}/>
+                  
+                  <div className="flex space-x-2 w-2/3">
+                    <button
+                      onClick={() => {
+                        setEnd(false);
+                      }}
+                      className="w-1/2 py-1 border-2 border-[#E5725D] text-[#E5725D] rounded-sm"
+                    >
+                      CANCLE
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEnd(false);
+                      }}
+                      className="border w-1/2 py-1 bg-[#E5725D] text-white rounded-sm"
+                    >
+                      ADD
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            
+          )}
+          
           {/* // Navigation Bar */}
           <NavigationBar />
           {/* // Todo Body */}
@@ -218,7 +272,7 @@ function Project_task() {
                 style={{ backgroundColor: "#FBF7F0" }}
               >
                 {/* 43% */}
-                <div className="rounded-2xl cols-span-1 flex items-center justify-center ml-16 ">
+                <div className="rounded-2xl flex items-center justify-center ml-16 ">
                   <div className="text-center">
                     <p
                       className="text-7xl"
@@ -266,7 +320,7 @@ function Project_task() {
                     </div>
                     <div>
                       <div className="flex space-x-3 items-center">
-                        <div className="w-5 h-5 rounded-full bg-[#CFCFAB]"></div>
+                        <div className="w-5 h-5 rounded-full bg-[#E9E9B7]"></div>
                         <p
                           className="text-xl font-light"
                           style={{ fontFamily: "jockey" }}
@@ -308,7 +362,7 @@ function Project_task() {
 
                   {/* <div className="w" style={}></div> */}
                 </div>
-                <div className="flex flex-col justify-end w-96  bg-project">
+                <div className="flex flex-col justify-end w-96 bg-project">
                   <div className="flex flex-col w-40">
                     <button
                       type="submit"
@@ -318,6 +372,9 @@ function Project_task() {
                     </button>
                     <button
                       type="submit"
+                      onClick={() => {
+                        setEnd(true);
+                      }}
                       className="bg-[#E5725D] border-2 text-[#FBF7F0] border-[#F08D6E] rounded-sm text-sm font-semibold px-6 py-1 mb-6 outline-none"
                     >
                       END PROJECT
@@ -344,5 +401,6 @@ function Project_task() {
     </DragDropContext>
   );
 }
+
 
 export default Project_task;
