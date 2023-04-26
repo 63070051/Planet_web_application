@@ -55,6 +55,7 @@ function Dashboard(props) {
       });
     GetUser();
   }, []);
+  console.log(myTodo)
   function GetUser() {
     axios
       .post(`${path}/user`, { id: localStorage.getItem("id") })
@@ -65,8 +66,8 @@ function Dashboard(props) {
         console.log(err);
       });
   }
-  function CheckBox(props) {
-    const [index, setIndex] = useState(props.index);
+  function CheckBox({todo, status, index}) {
+    // const [index, setIndex] = useState(index);
     const [checked, setChecked] = useState(false);
     return (
       <div className="border-t flex justify-between items-center px-6 py-3">
@@ -78,11 +79,11 @@ function Dashboard(props) {
         >
           <input
             type="checkbox"
-            checked={checked}
+            checked={status}
             onChange={() => {}}
             className="w-4 h-4 border-gray-300 rounded accent-[#FFAA9B]"
           />
-          <p style={{ fontFamily: "jura" }}>{props.text}</p>
+          <p style={{ fontFamily: "jura" }}>{todo}</p>
         </div>
         <img src={Minus} alt="" />
       </div>
@@ -225,11 +226,11 @@ function Dashboard(props) {
                   <p style={{ fontFamily: "jockey" }}>Today</p>
                   <img className="w-6" src={Plus} alt="" />
                 </div>
-                <div className="overflow-y-auto h-[150px] sm:h-[360px]">
+                <div className="overflow-y-auto h-[150px] sm:h-[360px]" >
                   {myTodo &&
                     myTodo.map((value, index) => {
                       return (
-                        <CheckBox text={value} key={index} index={index} />
+                        <CheckBox todo={value.todo} status={value.status} index={index} key={index} />
                       );
                     })}
                 </div>
@@ -245,10 +246,10 @@ function Dashboard(props) {
                   <img className="w-6" src={Plus} alt="" />
                 </div>
                 <div className="overflow-y-scroll h-[150px]  sm:h-[360px]">
-                  {myNote &&
+                  {/* {myNote &&
                     myNote.map((value, index) => {
                       // return <CheckBox text={value} key={index} index={index} />;
-                    })}
+                    })} */}
                 </div>
               </div>
             </div>
@@ -351,12 +352,12 @@ function Dashboard(props) {
                   <img className="w-6" src={Plus} alt="" />
                 </div>
                 <div className="overflow-y-auto h-[150px] sm:h-[360px]">
-                  {myTodo &&
+                  {/* {myTodo &&
                     myTodo.map((value, index) => {
                       return (
                         <CheckBox text={value} key={index} index={index} />
                       );
-                    })}
+                    })} */}
                 </div>
               </div>
             </div>

@@ -9,20 +9,35 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import Column from "../component/Column";
 import axios from "axios";
 import path from "../../path";
-import DonutChart from "../component/DonutChart";
+import DonutChartTask from "../component/DonutCharTaskPage";
 import bgProject from "../assets/bg_project_task.png";
 import addTodo from "../assets/addTodo.png";
+import { useLocation } from "react-router-dom";
 function Project_task() {
   const [state, setState] = useState();
   const [modal, setModal] = useState(false);
   const [user, setUser] = useState();
+  const location = useLocation();
+  const [todo, setTodo] = useState();
+  const [end, setEnd] = useState(false);
+  const [inprogress, setInprogress] = useState();
+  const [done, setDone] = useState();
+  const obj = location.state;
+  if (obj == null) {
+    window.location.replace("/task");
+  }
   function GetTask() {
     axios
       .post(`${path}/mytask`, {
         id: localStorage.getItem("id"),
+        index: obj.index,
+        project: Object.keys(obj.task)[0],
       })
       .then((res) => {
         setState(res.data);
+        setDone(res.data.columns["column-3"].taskIds.length);
+        setInprogress(res.data.columns["column-2"].taskIds.length);
+        setTodo(res.data.columns["column-1"].taskIds.length);
       })
       .catch((err) => {
         console.log(err);
@@ -40,11 +55,11 @@ function Project_task() {
   }
 
   function UpdateTask(task) {
-    console.log(task);
     axios
       .post(`${path}/updatetask`, {
         id: localStorage.getItem("id"),
-        project: "project1",
+        index: obj.index,
+        project: Object.keys(obj.task)[0],
         task: task,
       })
       .then((res) => {
@@ -55,10 +70,10 @@ function Project_task() {
       });
   }
 
-  // useEffect(() => {
-  //   GetTask();
-  //   GetUser();
-  // }, []);
+  useEffect(() => {
+    GetTask();
+    GetUser();
+  }, []);
   const onDragEnd = (result) => {
     const { destination, source } = result;
 
@@ -120,11 +135,14 @@ function Project_task() {
     };
 
     setState(newState);
+    setDone(newState.columns["column-3"].taskIds.length);
+    setInprogress(newState.columns["column-2"].taskIds.length);
+    setTodo(newState.columns["column-1"].taskIds.length);
     UpdateTask(newState);
   };
 
   return (
-    // <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEnd}>
       <div className="select-none">
         {/* // Body Grid */}
         <div
@@ -147,7 +165,7 @@ function Project_task() {
                 className="w-[25rem] h-[17rem] rounded-2xl bg-[#FBF7F0] z-50"
               >
                 <div className="flex flex-col justify-center items-center space-y-4 ">
-                  <img src={addTodo}  alt="" />
+                  <img src={addTodo} alt="" />
                   <div className="w-full flex justify-center">
                     <p className="font-jockey text-2xl mt-4">ADD TO DO</p>
                   </div>
@@ -174,6 +192,54 @@ function Project_task() {
               </div>
             </div>
           )}
+          {end && (
+            <div
+              id="modal-review"
+              className="w-full h-screen flex justify-center items-center absolute z-40"
+            >
+              <div
+                className="w-full h-full bg-[#6D6D68] absolute opacity-50"
+                onClick={() => {
+                  setEnd(false);
+                }}
+              ></div>
+              <div
+                id="modal-box"
+                className="w-[25rem] h-[23rem] rounded-2xl bg-[#FBF7F0] z-50"
+              >
+                <div className="flex flex-col justify-center items-center space-y-4 ">
+                  <img src={addTodo} alt="" />
+                  <div className="w-full flex  flex-col justify-center items-center">
+                    <p className="font-jockey text-2xl mt-4 tracking-wide">
+                      RATE YOUR PROJECT
+                    </p>
+                    <p className="font-kumbh tracking-wider">Cloud Project</p>
+                  </div>
+                  
+                  <div className="flex space-x-2 w-2/3">
+                    <button
+                      onClick={() => {
+                        setEnd(false);
+                      }}
+                      className="border w-1/2 py-1 border-[#E5725D] text-[#E5725D] rounded-sm"
+                    >
+                      CANCLE
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEnd(false);
+                      }}
+                      className="border w-1/2 py-1 bg-[#E5725D] text-white rounded-sm"
+                    >
+                      ADD
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          )}
+          
           {/* // Navigation Bar */}
           <NavigationBar />
           {/* // Todo Body */}
@@ -207,7 +273,7 @@ function Project_task() {
                       className="text-7xl"
                       style={{ color: "#75C9A8", fontFamily: "jockey" }}
                     >
-                      43%
+                      {parseInt((100 / (todo + inprogress + done)) * done)}%
                     </p>
                     <p
                       className="text-xl"
@@ -244,12 +310,12 @@ function Project_task() {
                         style={{ fontFamily: "jura" }}
                         className="ml-8 text-sm text-gray-400"
                       >
-                        4 tasks now
+                        {todo} tasks now
                       </p>
                     </div>
                     <div>
                       <div className="flex space-x-3 items-center">
-                        <div className="w-5 h-5 rounded-full bg-[#CFCFAB]"></div>
+                        <div className="w-5 h-5 rounded-full bg-[#E9E9B7]"></div>
                         <p
                           className="text-xl font-light"
                           style={{ fontFamily: "jockey" }}
@@ -261,7 +327,7 @@ function Project_task() {
                         style={{ fontFamily: "jura" }}
                         className="text-sm text-gray-400 ml-8"
                       >
-                        1 tasks now
+                        {inprogress} tasks now
                       </p>
                     </div>
                     <div>
@@ -278,7 +344,7 @@ function Project_task() {
                         style={{ fontFamily: "jura" }}
                         className="ml-8 text-sm text-gray-400"
                       >
-                        2 completed
+                        {done} completed
                       </p>
                     </div>
                   </div>
@@ -286,7 +352,7 @@ function Project_task() {
 
                 <div className="flex items-center justify-center relative">
                   <div className="w-[120px] sm:w-[200px] relative">
-                    <DonutChart />
+                    {state && <DonutChartTask task={state} index={0} />}
                   </div>
 
                   {/* <div className="w" style={}></div> */}
@@ -301,6 +367,9 @@ function Project_task() {
                     </button>
                     <button
                       type="submit"
+                      onClick={() => {
+                        setEnd(true);
+                      }}
                       className="bg-[#E5725D] border-2 text-[#FBF7F0] border-[#F08D6E] rounded-sm text-sm font-semibold px-6 py-1 mb-6 outline-none"
                     >
                       END PROJECT
@@ -324,8 +393,9 @@ function Project_task() {
           </div>
         </div>
       </div>
-    // </DragDropContext>
+    </DragDropContext>
   );
 }
+
 
 export default Project_task;

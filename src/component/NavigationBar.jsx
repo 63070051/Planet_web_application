@@ -19,9 +19,9 @@ const LinkTo = [
     text: "TO DO LIST",
   },
   {
-    link: "/Setting",
+    link: "/task",
     src: Setting,
-    text: "Tasks",
+    text: "TASKS",
   },
   {
     link: "/AllNotes",

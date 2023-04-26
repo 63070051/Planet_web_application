@@ -7,7 +7,7 @@ import "../fonts/Jura/static/Jura-Bold.ttf";
 import "../fonts/Jockey_One/JockeyOne-Regular.ttf";
 import "../fonts/Kumbh_Sans/static/KumbhSans-Regular.ttf";
 import "../fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
-import { useLocation } from "react-router-dom";
+import { useLocation} from "react-router-dom";
 import axios from "axios";
 import path from "../../path";
 
@@ -19,6 +19,9 @@ function Note() {
   const [description, setDescription] = useState();
   const [topic, setTopic] = useState();
   const [user, setUser] = useState();
+  if(myNote == null){
+    window.location.replace("/AllNotes")
+  }
   function UpdateNote() {
     axios
       .post(
