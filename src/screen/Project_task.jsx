@@ -13,6 +13,8 @@ import DonutChartTask from "../component/DonutCharTaskPage";
 import bgProject from "../assets/bg_project_task.png";
 import addTodo from "../assets/addTodo.png";
 import { useLocation } from "react-router-dom";
+import Rater from 'react-rater'
+import 'react-rater/lib/react-rater.css'
 function Project_task() {
   const [state, setState] = useState();
   const [modal, setModal] = useState(false);
@@ -162,15 +164,15 @@ function Project_task() {
               ></div>
               <div
                 id="modal-box"
-                className="w-[25rem] h-[17rem] rounded-2xl bg-[#FBF7F0] z-50"
+                className="w-[25rem] h-[16rem] rounded-2xl bg-[#FBF7F0] z-50"
               >
                 <div className="flex flex-col justify-center items-center space-y-4 ">
                   <img src={addTodo} alt="" />
-                  <div className="w-full flex justify-center">
-                    <p className="font-jockey text-2xl mt-4">ADD TO DO</p>
+                  <div className="w-4/5">
+                    <p className="font-jockey text-2xl mt-2">ADD YOUR TO DO</p>
                   </div>
-                  <input className="border w-2/3 h-9 outline-none p-3"></input>
-                  <div className="flex space-x-2 w-2/3">
+                  <input className="border-2 border-gray-300 rounded w-4/5 h-9 outline-none p-3 bg-[#FBF7F0]"></input>
+                  <div className="flex space-x-2 w-4/5">
                     <button
                       onClick={() => {
                         setModal(false);
@@ -205,7 +207,7 @@ function Project_task() {
               ></div>
               <div
                 id="modal-box"
-                className="w-[25rem] h-[23rem] rounded-2xl bg-[#FBF7F0] z-50"
+                className="w-[25rem] h-[22rem] rounded-2xl bg-[#FBF7F0] z-50"
               >
                 <div className="flex flex-col justify-center items-center space-y-4 ">
                   <img src={addTodo} alt="" />
@@ -215,13 +217,15 @@ function Project_task() {
                     </p>
                     <p className="font-kumbh tracking-wider">Cloud Project</p>
                   </div>
+                  <Rater className=
+                  "flex pb-4" onRate={({rating}) => {console.log(rating)}}/>
                   
                   <div className="flex space-x-2 w-2/3">
                     <button
                       onClick={() => {
                         setEnd(false);
                       }}
-                      className="border w-1/2 py-1 border-[#E5725D] text-[#E5725D] rounded-sm"
+                      className="w-1/2 py-1 border-2 border-[#E5725D] text-[#E5725D] rounded-sm"
                     >
                       CANCLE
                     </button>
@@ -234,6 +238,7 @@ function Project_task() {
                       ADD
                     </button>
                   </div>
+
                 </div>
               </div>
             </div>

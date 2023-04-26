@@ -20,6 +20,7 @@
     "react-burger-menu": "^3.0.9",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.0.0-rc.3",
+    "react-rater": "^6.0.5",
     "react-router-dom": "^6.9.0",
     "tailwind-scrollbar-hide": "^1.1.7"
   },
