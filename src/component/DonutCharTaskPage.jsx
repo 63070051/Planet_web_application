@@ -12,7 +12,8 @@ const options = {
   },
 };
 
-function DonutChartTask({ task }) {
+function DonutChartTask({ task, cutout }) {
+    
   const data = {
     labels: ["TODO", "INPROGRESS", "DONE"],
     datasets: [
@@ -26,7 +27,7 @@ function DonutChartTask({ task }) {
         hoverOffset: 4,
         borderWidth: 4,
         borderColor:"white",
-        cutout: "0%",
+        cutout: cutout,
       },
     ],
   };
