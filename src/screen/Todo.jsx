@@ -44,7 +44,18 @@ function TodoList() {
   const [create, setCreate] = useState(false);
   const [newTodo, setNewTodo] = useState("");
   const [user, setUser] = useState();
-  useEffect(() => {
+  function GetUser() {
+    axios
+      .post(`${path}/user`, { id: localStorage.getItem("id") })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function GetCalendar() {
     axios
       .post(`${path}/calendar`, { id: localStorage.getItem("id") })
       .then((res) => {
@@ -54,6 +65,8 @@ function TodoList() {
       .catch((e) => {
         console.log(e);
       });
+  }
+  function GetTodo() {
     axios
       .post(`${path}/mytodo`, {
         id: localStorage.getItem("id"),
@@ -68,19 +81,12 @@ function TodoList() {
       .catch((e) => {
         console.log(e);
       });
+  }
+  useEffect(() => {
+    GetCalendar();
+    GetTodo();
     GetUser();
   }, []);
-
-  function GetUser() {
-    axios
-      .post(`${path}/user`, { id: localStorage.getItem("id") })
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
 
   function CheckBox(props) {
     const [index, setIndex] = useState(props.index);
@@ -103,7 +109,18 @@ function TodoList() {
           />
           <p style={{ fontFamily: "jura" }}>{props.item.todo}</p>
         </div>
-        <img src={Minus} alt="" />
+        <div>
+          <img
+            className="py-4"
+            onClick={() => {
+              if (confirm("Confirm Delete Todo")) {
+                DeleteTodo(props.index);
+              }
+            }}
+            src={Minus}
+            alt=""
+          />
+        </div>
       </div>
     );
   }
@@ -195,13 +212,10 @@ function TodoList() {
       });
   }
 
-  function AddTodo() {
-    const setTodo = {
-      todo: newTodo,
-      status: false,
-    };
+  function DeleteTodo(index) {
     let array = myTodo;
-    array.push(setTodo);
+    array.splice(index, 1)
+    setMyTodo([...array]);
     axios
       .put(`${path}/mytodo`, {
         id: localStorage.getItem("id"),
@@ -213,7 +227,32 @@ function TodoList() {
         if (res.data == "successfully") {
           setNewTodo("");
           setCreate(false);
-          setMyTodo(array);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function AddTodo() {
+    const setTodo = {
+      todo: newTodo,
+      status: false,
+    };
+    let array = myTodo;
+    array.push(setTodo);
+    setMyTodo(array);
+    setCreate(false);
+    axios
+      .put(`${path}/mytodo`, {
+        id: localStorage.getItem("id"),
+        month: focusMonth,
+        day: focus,
+        todo: { userTodo: array },
+      })
+      .then((res) => {
+        if (res.data == "successfully") {
+          setNewTodo("");
         }
       })
       .catch((err) => {
