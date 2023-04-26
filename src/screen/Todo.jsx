@@ -16,6 +16,7 @@ import Down_arrow from "../assets/down_arrow.svg";
 import moment from "moment";
 import axios from "axios";
 import path from "../../path";
+import Loading from "../component/Loading";
 
 const MONTH = [
   "January",
@@ -44,6 +45,8 @@ function TodoList() {
   const [create, setCreate] = useState(false);
   const [newTodo, setNewTodo] = useState("");
   const [user, setUser] = useState();
+  const [percent, setPercent] = useState(0);
+  const [load, setLoad] = useState(false);
   function GetUser() {
     axios
       .post(`${path}/user`, { id: localStorage.getItem("id") })
@@ -57,10 +60,24 @@ function TodoList() {
 
   function GetCalendar() {
     axios
-      .post(`${path}/calendar`, { id: localStorage.getItem("id") })
+      .post(
+        `${path}/calendar`,
+        { id: localStorage.getItem("id") },
+        {
+          onDownloadProgress: (progressEvent) => {
+            let percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setPercent(percentCompleted);
+          },
+        }
+      )
       .then((res) => {
         setAllCalendar(res.data);
         setFocusCalendar(res.data[focusMonth]);
+        setTimeout(() => {
+          setLoad(true);
+        }, 400);
       })
       .catch((e) => {
         console.log(e);
@@ -83,9 +100,9 @@ function TodoList() {
       });
   }
   useEffect(() => {
-    GetCalendar();
     GetTodo();
     GetUser();
+    GetCalendar();
   }, []);
 
   function CheckBox(props) {
@@ -214,7 +231,7 @@ function TodoList() {
 
   function DeleteTodo(index) {
     let array = myTodo;
-    array.splice(index, 1)
+    array.splice(index, 1);
     setMyTodo([...array]);
     axios
       .put(`${path}/mytodo`, {
@@ -263,212 +280,218 @@ function TodoList() {
   return (
     <div className="select-none">
       {/* // Body Grid */}
-      <div
-        className="grid grid-cols-5 gap-4 min-h-screen pr-6"
-        style={{ backgroundColor: "#EFEADE" }}
-      >
-        {/* // Navigation Bar */}
-        <NavigationBar />
-        {/* // Todo Body */}
-        <div className="col-span-3 px-2 pt-6">
-          {user && (
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                  Welcome back, {user.firstname + " " + user.lastname}
-                </p>
-                <p
-                  className="text-xl"
-                  style={{ fontFamily: "Kumbh_Sans_Regular" }}
-                >
-                  What’s Up Today?
-                </p>
+      {load ? (
+        <div
+          className="grid grid-cols-5 gap-4 min-h-screen pr-6"
+          style={{ backgroundColor: "#EFEADE" }}
+        >
+          {/* // Navigation Bar */}
+          <NavigationBar />
+          {/* // Todo Body */}
+          <div className="col-span-3 px-2 pt-6">
+            {user && (
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+                    Welcome back, {user.firstname + " " + user.lastname}
+                  </p>
+                  <p
+                    className="text-xl"
+                    style={{ fontFamily: "Kumbh_Sans_Regular" }}
+                  >
+                    What’s Up Today?
+                  </p>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <img className="w-10" src={Notification} alt="" />
+                  <img className="w-10" src={Profile} alt="" />
+                </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <img className="w-10" src={Notification} alt="" />
-                <img className="w-10" src={Profile} alt="" />
-              </div>
-            </div>
-          )}
-          <div
-            className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85.5vh]"
-            style={{ backgroundColor: "#FBF7F0" }}
-          >
-            <div className="flex items-center justify-between">
-              <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                TO DO LIST
-              </p>
-              <div className="relative">
-                <select
-                  defaultValue={focusMonth}
-                  onChange={(e) => {
-                    setFocusCalendar(allCalendar[e.target.value]);
-                    setFocusMonth(e.target.value);
-                    if (
-                      Object.keys(allCalendar[e.target.value]).length < focus
-                    ) {
-                      setFocusDay(
-                        allCalendar[e.target.value][
-                          new Date().getDate()
-                        ].day.toUpperCase()
-                      );
-                      setFocus(new Date().getDate());
-                    } else {
-                      setFocusDay(
-                        allCalendar[e.target.value][focus].day.toUpperCase()
-                      );
-                    }
-                    ChangeTaskDayOnMonth(focus, e.target.value);
-                  }}
-                  className="p-2.5 text-gray-500 text-xl text-center bg-[#FBF7F0] outline-none appearance-none focus:border-indigo-600"
-                  style={{ fontFamily: "jura" }}
-                >
-                  <option value="January">January</option>
-                  <option value="February">February</option>
-                  <option value="March">March</option>
-                  <option value="April">April</option>
-                  <option value="May">May</option>
-                  <option value="June">June</option>
-                  <option value="July">July</option>
-                  <option value="August">August</option>
-                  <option value="September">September</option>
-                  <option value="October">October</option>
-                  <option value="November">November</option>
-                  <option value="December">December</option>
-                </select>
-                <img
-                  className="w-3 absolute top-1 left-16 bottom-0 right-0 m-auto -rotate-90"
-                  src={Down_arrow}
-                  alt=""
-                />
-              </div>
-            </div>
-            <div className="relative flex items-center">
-              <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll ">
-                {focusCalendar &&
-                  Object.keys(focusCalendar).map((value, index) => {
-                    return index + 1 == focus ? (
-                      <DayComponent
-                        day={index + 1}
-                        days={focusCalendar[value].day}
-                        color={"white"}
-                        bg={"#FFAA9B"}
-                        key={index}
-                      />
-                    ) : (
-                      <DayComponent
-                        day={index + 1}
-                        days={focusCalendar[value].day}
-                        color={"#B5B7B9"}
-                        bg={"FBF7F0"}
-                        key={index}
-                      />
-                    );
-                  })}
-              </div>
-            </div>
+            )}
             <div
-              className="w-full mt-10 border rounded-lg"
-              style={{ borderColor: "#D9DADA" }}
+              className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85.5vh]"
+              style={{ backgroundColor: "#FBF7F0" }}
             >
-              <div className="text-xl flex justify-between items-center px-6 py-2">
-                <p style={{ fontFamily: "jockey" }}>
-                  {focus} {focusDay}
+              <div className="flex items-center justify-between">
+                <p className="text-2xl" style={{ fontFamily: "jockey" }}>
+                  TO DO LIST
                 </p>
+                <div className="relative">
+                  <select
+                    defaultValue={focusMonth}
+                    onChange={(e) => {
+                      setFocusCalendar(allCalendar[e.target.value]);
+                      setFocusMonth(e.target.value);
+                      if (
+                        Object.keys(allCalendar[e.target.value]).length < focus
+                      ) {
+                        setFocusDay(
+                          allCalendar[e.target.value][
+                            new Date().getDate()
+                          ].day.toUpperCase()
+                        );
+                        setFocus(new Date().getDate());
+                      } else {
+                        setFocusDay(
+                          allCalendar[e.target.value][focus].day.toUpperCase()
+                        );
+                      }
+                      ChangeTaskDayOnMonth(focus, e.target.value);
+                    }}
+                    className="p-2.5 text-gray-500 text-xl text-center bg-[#FBF7F0] outline-none appearance-none focus:border-indigo-600"
+                    style={{ fontFamily: "jura" }}
+                  >
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                  </select>
+                  <img
+                    className="w-3 absolute top-1 left-16 bottom-0 right-0 m-auto -rotate-90"
+                    src={Down_arrow}
+                    alt=""
+                  />
+                </div>
+              </div>
+              <div className="relative flex items-center">
+                <div className="grid grid-flow-col auto-cols-max gap-2 overflow-x-scroll ">
+                  {focusCalendar &&
+                    Object.keys(focusCalendar).map((value, index) => {
+                      return index + 1 == focus ? (
+                        <DayComponent
+                          day={index + 1}
+                          days={focusCalendar[value].day}
+                          color={"white"}
+                          bg={"#FFAA9B"}
+                          key={index}
+                        />
+                      ) : (
+                        <DayComponent
+                          day={index + 1}
+                          days={focusCalendar[value].day}
+                          color={"#B5B7B9"}
+                          bg={"FBF7F0"}
+                          key={index}
+                        />
+                      );
+                    })}
+                </div>
+              </div>
+              <div
+                className="w-full mt-10 border rounded-lg"
+                style={{ borderColor: "#D9DADA" }}
+              >
+                <div className="text-xl flex justify-between items-center px-6 py-2">
+                  <p style={{ fontFamily: "jockey" }}>
+                    {focus} {focusDay}
+                  </p>
+                  <img
+                    onClick={() => {
+                      setCreate(true);
+                    }}
+                    className="w-6"
+                    src={Plus}
+                    alt=""
+                  />
+                </div>
+                <div className="overflow-y-auto h-[55vh]">
+                  {myTodo &&
+                    myTodo.map((value, index) => {
+                      return (
+                        <CheckBox item={value} key={index} index={index} />
+                      );
+                    })}
+                  {create && (
+                    <div className="px-6 flex itemscenter justify-between">
+                      <input
+                        className="shadow appearance-none border rounded-lg py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="todo"
+                        type="text"
+                        placeholder="New Todo"
+                        onChange={(e) => {
+                          setNewTodo(e.target.value);
+                        }}
+                      />
+                      <div className="space-x-2">
+                        <button
+                          onClick={() => {
+                            setNewTodo("");
+                            setCreate(false);
+                          }}
+                          className="px-4 py-2 bg-red-600 text-white rounded-lg"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => {
+                            AddTodo();
+                          }}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg"
+                        >
+                          Confirm
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* //Task Status */}
+          <div
+            style={{ backgroundColor: "#FBF7F0" }}
+            className="rounded-xl mt-6 mb-6 col-span-1"
+          >
+            <div className="flex justify-end">
+              <img className="w-4/5" src={RightBackground} alt="" />
+            </div>
+            <div className="text-center">
+              <p
+                className="text-7xl mt-12"
+                style={{ color: "#75C9A8", fontFamily: "jockey" }}
+              >
+                43%
+              </p>
+              <p
+                className="text-xl"
+                style={{ color: "#B5B7B9", fontFamily: "jockey" }}
+              >
+                Completed Tasks
+              </p>
+              <div className="mt-16 lg:mt-12 xl:mt-8 px-4 mx-auto relative">
                 <img
-                  onClick={() => {
-                    setCreate(true);
-                  }}
-                  className="w-6"
+                  className="absolute w-10 right-0 bottom-0 left-0 top-0 m-auto"
                   src={Plus}
                   alt=""
                 />
+                <DonutChart />
               </div>
-              <div className="overflow-y-auto h-[55vh]">
-                {myTodo &&
-                  myTodo.map((value, index) => {
-                    return <CheckBox item={value} key={index} index={index} />;
-                  })}
-                {create && (
-                  <div className="px-6 flex itemscenter justify-between">
-                    <input
-                      className="shadow appearance-none border rounded-lg py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      id="todo"
-                      type="text"
-                      placeholder="New Todo"
-                      onChange={(e) => {
-                        setNewTodo(e.target.value);
-                      }}
-                    />
-                    <div className="space-x-2">
-                      <button
-                        onClick={() => {
-                          setNewTodo("");
-                          setCreate(false);
-                        }}
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          AddTodo();
-                        }}
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg"
-                      >
-                        Confirm
-                      </button>
-                    </div>
-                  </div>
-                )}
+              <div className="px-6">
+                <button
+                  className="w-full py-1 border text-sm rounded mt-8"
+                  style={{
+                    fontFamily: "jockey",
+                    borderColor: "#768592",
+                    color: "#858585",
+                  }}
+                >
+                  View your tasks
+                </button>
               </div>
             </div>
           </div>
         </div>
-        {/* //Task Status */}
-        <div
-          style={{ backgroundColor: "#FBF7F0" }}
-          className="rounded-xl mt-6 mb-6 col-span-1"
-        >
-          <div className="flex justify-end">
-            <img className="w-4/5" src={RightBackground} alt="" />
-          </div>
-          <div className="text-center">
-            <p
-              className="text-7xl mt-12"
-              style={{ color: "#75C9A8", fontFamily: "jockey" }}
-            >
-              43%
-            </p>
-            <p
-              className="text-xl"
-              style={{ color: "#B5B7B9", fontFamily: "jockey" }}
-            >
-              Completed Tasks
-            </p>
-            <div className="mt-16 lg:mt-12 xl:mt-8 px-4 mx-auto relative">
-              <img
-                className="absolute w-10 right-0 bottom-0 left-0 top-0 m-auto"
-                src={Plus}
-                alt=""
-              />
-              <DonutChart />
-            </div>
-            <div className="px-6">
-              <button
-                className="w-full py-1 border text-sm rounded mt-8"
-                style={{
-                  fontFamily: "jockey",
-                  borderColor: "#768592",
-                  color: "#858585",
-                }}
-              >
-                View your tasks
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      ) : (
+        <Loading percent={percent} />
+      )}
     </div>
   );
 }

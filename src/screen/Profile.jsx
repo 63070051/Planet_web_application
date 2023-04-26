@@ -4,7 +4,7 @@ import User from "../assets/profile.svg";
 import axios from "axios";
 import path from "../../path";
 import md5 from "md5";
-
+import Loading from "../component/Loading";
 
 export default function Profile() {
   const [user, setUser] = useState();
@@ -15,6 +15,8 @@ export default function Profile() {
   const [images, setImages] = useState([]);
   const [imageURLs, setImageURLs] = useState([]);
   const [logout, setLogout] = useState(true);
+  const [load, setLoad] = useState(false);
+  const [percent, setPercent] = useState(0);
   function Preview_Img(img) {
     if (img.length < 1) return;
     const newImageUrls = [];
@@ -63,9 +65,23 @@ export default function Profile() {
   }, []);
   function GetUser() {
     axios
-      .post(`${path}/user`, { id: localStorage.getItem("id") })
+      .post(
+        `${path}/user`,
+        { id: localStorage.getItem("id") },
+        {
+          onDownloadProgress: (progressEvent) => {
+            let percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setPercent(percentCompleted);
+          },
+        }
+      )
       .then((res) => {
         setUser(res.data);
+        setTimeout(() => {
+          setLoad(true);
+        }, 400);
       })
       .catch((err) => {
         console.log(err);
@@ -73,149 +89,151 @@ export default function Profile() {
   }
   return (
     <div className="h-screen">
-      <div className="h-full grid grid-cols-5 bg-[#EFEADE]">
-        <NavigationBar />
-        <div className="col-span-4 px-4 h-full flex justify-center items-center">
-          <div className="flex flex-col justify-center items-center bg-[#FBF7F0] w-[98%] h-[95%] rounded-xl">
-            <p
-              className="text-3xl mb-5 text-[#00213F]"
-              style={{ fontFamily: "jockey" }}
-            >
-              Profile
-            </p>
-            {!edit && (
-              <input
-                type="file"
-                className="hidden"
-                multiple
-                id="file-img"
-                accept="image/*"
-                onChange={onImageChange}
-              />
-            )}
-            <label htmlFor="file-img">
-              {imageURLs.length ? (
-                imageURLs.map((imageSrc, idx) => {
-                  return (
-                    <img
-                      className="rounded-full h-[150px] w-[150px] object-cover"
-                      key={idx}
-                      src={imageSrc}
-                    />
-                  );
-                })
-              ) : (
-                <img src={User} width={150} alt="" />
+      {load ? (
+        <div className="h-full grid grid-cols-5 bg-[#EFEADE]">
+          <NavigationBar />
+          <div className="col-span-4 px-4 h-full flex justify-center items-center">
+            <div className="flex flex-col justify-center items-center bg-[#FBF7F0] w-[98%] h-[95%] rounded-xl">
+              <p
+                className="text-3xl mb-5 text-[#00213F]"
+                style={{ fontFamily: "jockey" }}
+              >
+                Profile
+              </p>
+              {!edit && (
+                <input
+                  type="file"
+                  className="hidden"
+                  multiple
+                  id="file-img"
+                  accept="image/*"
+                  onChange={onImageChange}
+                />
               )}
-            </label>
-            {user && (
-              <div className="space-y-8 w-72">
-                <div className="space-y-3">
-                  <div>
-                    <label
-                      className="block text-gray-400 text-sm mb-2"
-                      htmlFor="username"
-                    >
-                      Firstname
-                    </label>
-                    <input
-                      disabled={edit}
-                      defaultValue={user.firstname}
-                      className="shadow bg-[#FBF7F0] border-[#8A97A0] appearance-none border rounded-sm w-full py-2 px-3 text-[#B5B7B9] leading-tight focus:outline-none focus:shadow-outline"
-                      id="firstname"
-                      type="text"
-                      onChange={(e) => {
-                        setFirstName(e.target.value);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block bg-[#FBF7F0] border-[#8A97A0] text-gray-400 text-sm mb-2"
-                      htmlFor="username"
-                    >
-                      Lastname
-                    </label>
-                    <input
-                      disabled={edit}
-                      defaultValue={user.lastname}
-                      className="shadow bg-[#FBF7F0] border-[#8A97A0] appearance-none border rounded-sm w-full py-2 px-3  text-[#B5B7B9] leading-tight focus:outline-none focus:shadow-outline"
-                      id="lastname"
-                      type="text"
-                      onChange={(e) => {
-                        setLastName(e.target.value);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block  text-gray-400 text-sm mb-2"
-                      htmlFor="username"
-                    >
-                      Password
-                    </label>
-                    <input
-                      disabled={edit}
-                      defaultValue={user.password}
-                      className="shadow bg-[#FBF7F0] border-[#8A97A0] appearance-none border rounded-sm w-full py-2 px-3 text-[#B5B7B9] leading-tight focus:outline-none focus:shadow-outline"
-                      id="password"
-                      type="password"
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                      }}
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    {edit && (
-                      <button
-
-                        onClick={() => {
-                          setEdit(!edit);
-                          setLogout(false)
+              <label htmlFor="file-img">
+                {imageURLs.length ? (
+                  imageURLs.map((imageSrc, idx) => {
+                    return (
+                      <img
+                        className="rounded-full h-[150px] w-[150px] object-cover"
+                        key={idx}
+                        src={imageSrc}
+                      />
+                    );
+                  })
+                ) : (
+                  <img src={User} width={150} alt="" />
+                )}
+              </label>
+              {user && (
+                <div className="space-y-8 w-72">
+                  <div className="space-y-3">
+                    <div>
+                      <label
+                        className="block text-gray-400 text-sm mb-2"
+                        htmlFor="username"
+                      >
+                        Firstname
+                      </label>
+                      <input
+                        disabled={edit}
+                        defaultValue={user.firstname}
+                        className="shadow bg-[#FBF7F0] border-[#8A97A0] appearance-none border rounded-sm w-full py-2 px-3 text-[#B5B7B9] leading-tight focus:outline-none focus:shadow-outline"
+                        id="firstname"
+                        type="text"
+                        onChange={(e) => {
+                          setFirstName(e.target.value);
                         }}
-                        className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#146C94] border-2 text-[#146C94]"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className="block bg-[#FBF7F0] border-[#8A97A0] text-gray-400 text-sm mb-2"
+                        htmlFor="username"
                       >
-                        EDIT
-                      </button>
-                    )}
-                    {logout&&<button
-                    
-                        className="logout text-sm px-4 py-1 w-full rounded-sm mt-3 text-white  bg-[#F08D6E]"
+                        Lastname
+                      </label>
+                      <input
+                        disabled={edit}
+                        defaultValue={user.lastname}
+                        className="shadow bg-[#FBF7F0] border-[#8A97A0] appearance-none border rounded-sm w-full py-2 px-3  text-[#B5B7B9] leading-tight focus:outline-none focus:shadow-outline"
+                        id="lastname"
+                        type="text"
+                        onChange={(e) => {
+                          setLastName(e.target.value);
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        className="block  text-gray-400 text-sm mb-2"
+                        htmlFor="username"
                       >
-                        LOGOUT
-                      </button>}
-                    {!edit && (
-                      <div className="grid grid-cols-2 gap-4">
+                        Password
+                      </label>
+                      <input
+                        disabled={edit}
+                        defaultValue={user.password}
+                        className="shadow bg-[#FBF7F0] border-[#8A97A0] appearance-none border rounded-sm w-full py-2 px-3 text-[#B5B7B9] leading-tight focus:outline-none focus:shadow-outline"
+                        id="password"
+                        type="password"
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                        }}
+                      />
+                    </div>
+                    <div className="space-y-4">
+                      {edit && (
                         <button
                           onClick={() => {
                             setEdit(!edit);
-                            setFirstName(user.firstname);
-                            setLastName(user.lastname);
-                            setPassword(user.password);
-                            setLogout(true)
+                            setLogout(false);
                           }}
-                          className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#F08D6E] border-2 text-[#F08D6E]"
+                          className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#146C94] border-2 text-[#146C94]"
                         >
-                          CANCEL
+                          EDIT
                         </button>
-                        <button
-                          onClick={() => {
-                            setLogout(true)
-                            UpdateUser();
-                          }}
-                          className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#569DAA] border-2 text-[#569DAA]"
-                        >
-                          CONFIRM
+                      )}
+                      {logout && (
+                        <button className="logout text-sm px-4 py-1 w-full rounded-sm mt-3 text-white  bg-[#F08D6E]">
+                          LOGOUT
                         </button>
-                      </div>
-                    )}
+                      )}
+                      {!edit && (
+                        <div className="grid grid-cols-2 gap-4">
+                          <button
+                            onClick={() => {
+                              setEdit(!edit);
+                              setFirstName(user.firstname);
+                              setLastName(user.lastname);
+                              setPassword(user.password);
+                              setLogout(true);
+                            }}
+                            className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#F08D6E] border-2 text-[#F08D6E]"
+                          >
+                            CANCEL
+                          </button>
+                          <button
+                            onClick={() => {
+                              setLogout(true);
+                              UpdateUser();
+                            }}
+                            className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#569DAA] border-2 text-[#569DAA]"
+                          >
+                            CONFIRM
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <Loading percent={percent} />
+      )}
     </div>
   );
 }
