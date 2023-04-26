@@ -12,6 +12,7 @@ import Note from "./screen/Note";
 import Task from "./screen/Task";
 import Project_task from "./screen/Project_task";
 import { RequireAuth } from "./auth/requireAuth";
+import Loading from "./component/Loading";
 
 function App() {
   return (
@@ -74,6 +75,12 @@ function App() {
               <RequireAuth>
                 <Project_task />
               </RequireAuth>
+            }
+          />
+          <Route
+            path="/loading"
+            element={
+                <Loading />
             }
           />
         </Routes>
