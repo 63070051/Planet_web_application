@@ -355,13 +355,15 @@ function Project_task() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center relative">
-                  <div className="w-[120px] sm:w-[200px] relative">
+                <div className="flex items-center justify-center relative ">
+                  <div className="w-[120px] sm:w-[200px] relative ">
                     {state && <DonutChartTask task={state} index={0} />}
                   </div>
 
                   {/* <div className="w" style={}></div> */}
+                  
                 </div>
+                
                 <div className="flex flex-col justify-end w-96 bg-project">
                   <div className="flex flex-col w-40">
                     <button

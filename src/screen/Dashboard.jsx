@@ -13,7 +13,7 @@ import axios from "axios";
 import path from "../../path";
 import { Link } from "react-router-dom";
 import Loading from "../component/Loading";
-
+import bgDash from "../assets/bg_project_task.png";
 function Dashboard(props) {
   const [myTodo, setMyTodo] = useState();
   const [myNote, setMyNote] = useState();
@@ -206,7 +206,7 @@ function Dashboard(props) {
             {/* graph */}
             {state && (
               <div
-                className="grid grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-4 h-[35%] sm:h-[30%] rounded-2xl relative"
+                className="grid grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-4 h-[35%] sm:h-[30%] rounded-2xl relative"
                 style={{ backgroundColor: "#FBF7F0" }}
               >
                 <div className="rounded-2xl cols-span-1 flex items-center justify-center">
@@ -293,6 +293,9 @@ function Dashboard(props) {
                       done={done}
                     />
                   </div>
+                </div>
+                <div className="w-full hidden lg:block">
+                  <img src={bgDash} alt="" />
                 </div>
               </div>
             )}
