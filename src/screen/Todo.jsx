@@ -16,7 +16,8 @@ import Down_arrow from "../assets/down_arrow.svg";
 import moment from "moment";
 import axios from "axios";
 import path from "../../path";
-import Loading from "../component/Loading";import circleTask from "../assets/circle_task.svg";
+import Loading from "../component/Loading";
+import circleTask from "../assets/circle_task.svg";
 import triangle from "../assets/triangle-noti.svg";
 import { Link } from "react-router-dom";
 const MONTH = [
@@ -392,7 +393,6 @@ function TodoList() {
                 </p>
                 <div className="relative cursor-pointer">
                   <select
-                  
                     defaultValue={focusMonth}
                     onChange={(e) => {
                       setFocusCalendar(allCalendar[e.target.value]);
@@ -478,7 +478,7 @@ function TodoList() {
                   />
                 </div>
                 <div className="overflow-y-auto h-80">
-                {create && (
+                  {create && (
                     <div className="p-2 px-4 flex  itemscenter justify-between border-t">
                       <input
                         className="bg-[#FBF7F0] p-2 outline-none w-1/2"
@@ -516,7 +516,6 @@ function TodoList() {
                         <CheckBox item={value} key={index} index={index} />
                       );
                     })}
-                  
                 </div>
               </div>
             </div>
@@ -542,14 +541,16 @@ function TodoList() {
               >
                 Completed Tasks
               </p>
-              
+
               <div className=" px-4 mx-auto relative">
                 <img
                   className="absolute w-10 right-0 bottom-0 left-0 top-0 m-auto"
                   src={Plus}
                   alt=""
                 />
-                <DonutChart />
+             
+                  <DonutChart />
+                
               </div>
               <Link to="/Task" className="px-6">
                 <button

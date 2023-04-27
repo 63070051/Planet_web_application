@@ -356,11 +356,13 @@ function Dashboard(props) {
                 </div>
                 <div className="flex items-center justify-center">
                   <div className="w-[120px] sm:w-[200px] relative">
-                    <img
-                      className="m-auto absolute top-0 right-0 bottom-0 left-0 w-6 sm:w-10"
-                      src={Plus}
-                      alt=""
-                    />
+                    <Link to="/Task">
+                      <img
+                        className="m-auto absolute top-0 right-0 bottom-0 left-0 w-6 sm:w-10"
+                        src={Plus}
+                        alt=""
+                      />
+                    </Link>
                     <DonutChart
                       todo={todo}
                       inprogress={inprogress}
@@ -407,7 +409,9 @@ function Dashboard(props) {
                 >
                   <div className="text-xl flex justify-between items-center px-6 py-2">
                     <p style={{ fontFamily: "jockey" }}>Note</p>
-                    <img className="w-6" src={Plus} alt="" />
+                    <Link to="/AddNote">
+                      <img className="w-6" src={Plus} alt="" />
+                    </Link>
                   </div>
                   <div className="overflow-y-scroll sm:h-[87%]">
                     {myNote &&
