@@ -5,6 +5,7 @@ import axios from "axios";
 import path from "../../path";
 import md5 from "md5";
 import Loading from "../component/Loading";
+import { Buffer } from "buffer";
 
 export default function Profile() {
   const [user, setUser] = useState();
@@ -28,11 +29,30 @@ export default function Profile() {
     Preview_Img([...e.target.files]);
   }
 
-  console.log("Images : ", images);
+  // console.log("Images : ", images);
   // console.log("imageURLs : ", imageURLs);
 
   function UpdateUser() {
     if (confirm("Are you sure update profile")) {
+      if (images) {
+        const file = images[0]; // the file object of the image
+        const reader = new FileReader();
+        let name = images[0].name;
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const base64Img = reader.result.split(",")[1];
+          axios
+            .put(`${path}/addprofileimage`, {
+              id: localStorage.getItem("id"),
+              image: base64Img,
+              fileName: name,
+            })
+            .then((res) => {
+              console.log(res.data);
+            })
+            .catch((err) => console.log(err));
+        };
+      }
       let c_password;
       if (password == "" || password == user.password) {
         c_password = user.password;
@@ -65,23 +85,43 @@ export default function Profile() {
   }, []);
   function GetUser() {
     axios
-      .post(
-        `${path}/user`,
-        { id: localStorage.getItem("id") },
-        {
-          onDownloadProgress: (progressEvent) => {
-            let percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setPercent(percentCompleted);
-          },
-        }
-      )
+      .post(`${path}/user`, { id: localStorage.getItem("id") })
       .then((res) => {
+        if (res.data.image != "") {
+          axios
+            .post(
+              `${path}/getprofile`,
+              {
+                path: res.data.image,
+              },
+              {
+                onDownloadProgress: (progressEvent) => {
+                  let percentCompleted = Math.round(
+                    (progressEvent.loaded * 100) / progressEvent.total
+                  );
+                  setPercent(percentCompleted);
+                },
+              }
+            )
+            .then((res) => {
+              const b64 = new Buffer(res.data.data).toString("base64");
+              setImageURLs([`data:*/*;base64, ${b64}`]);
+              setTimeout(() => {
+                setLoad(true);
+              }, 400);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+        else{
+          setTimeout(() => {
+            setLoad(true);
+          }, 400);
+        }
         setUser(res.data);
-        setTimeout(() => {
-          setLoad(true);
-        }, 400);
+        setFirstName(res.data.firstname)
+        setLastName(res.data.lastname)
       })
       .catch((err) => {
         console.log(err);
@@ -106,7 +146,6 @@ export default function Profile() {
                   className="hidden"
                   multiple
                   id="file-img"
-                  accept="image/*"
                   onChange={onImageChange}
                 />
               )}
@@ -208,6 +247,8 @@ export default function Profile() {
                               setLastName(user.lastname);
                               setPassword(user.password);
                               setLogout(true);
+                              setImageURLs([]);
+                              setImages([]);
                             }}
                             className="text-sm px-4 py-1 w-full rounded-sm mt-3 border-[#F08D6E] border-2 text-[#F08D6E]"
                           >
