@@ -17,7 +17,9 @@ import moment from "moment";
 import axios from "axios";
 import path from "../../path";
 import Loading from "../component/Loading";
-
+import circleTask from "../assets/circle_task.svg";
+import triangle from "../assets/triangle-noti.svg";
+import { Link } from "react-router-dom";
 const MONTH = [
   "January",
   "Febuary",
@@ -47,6 +49,82 @@ function TodoList() {
   const [user, setUser] = useState();
   const [percent, setPercent] = useState(0);
   const [load, setLoad] = useState(false);
+  const [popup, setPopup] = useState(false);
+  function RenderNotification() {
+    if (popup) {
+      return (
+        <div className="flex items-center space-x-4 relative z-20">
+          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
+            <img
+              className="w-10 cursor-pointer"
+              src={Notification}
+              onClick={() => {
+                setPopup(!popup);
+              }}
+              alt=""
+            />
+          </div>
+          <div
+            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
+            style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
+          >
+            <img
+              src={triangle}
+              className="absolute -top-4 right-[4.2rem]"
+              alt=""
+            />
+            <div
+              id="head-notification"
+              className="text-2xl py-5 px-6 font-jockey border"
+            >
+              Notifications
+            </div>
+            <div id="content-notification">
+              <div
+                id="notification-items"
+                className="border py-5 px-6 flex items-center justify-between"
+              >
+                <div className="flex items-center space-x-4">
+                  <img src={circleTask} alt="" />
+                  <div id="detail-notification" className="">
+                    <p className="font-jockey text-lg uppercase">todo list</p>
+                    <span className="font-jura text-[#8a97a0]">
+                      4 tasks now
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
+                >
+                  VIEW
+                </button>
+              </div>
+            </div>
+          </div>
+          <img className="w-10" src={Profile} alt="" />
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex items-center space-x-4 relative">
+          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
+            <img
+              className="w-10"
+              src={Notification}
+              onClick={() => {
+                setPopup(!popup);
+              }}
+              alt=""
+            />
+          </div>
+          <Link to="/Profile">
+            <img className="w-10" src={Profile} alt="" />
+          </Link>
+        </div>
+      );
+    }
+  }
   function GetUser() {
     axios
       .post(`${path}/user`, { id: localStorage.getItem("id") })
@@ -302,21 +380,18 @@ function TodoList() {
                     What’s Up Today?
                   </p>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <img className="w-10" src={Notification} alt="" />
-                  <img className="w-10" src={Profile} alt="" />
-                </div>
+                <RenderNotification />
               </div>
             )}
             <div
-              className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85.5vh]"
+              className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85%]"
               style={{ backgroundColor: "#FBF7F0" }}
             >
               <div className="flex items-center justify-between">
                 <p className="text-2xl" style={{ fontFamily: "jockey" }}>
                   TO DO LIST
                 </p>
-                <div className="relative">
+                <div className="relative cursor-pointer">
                   <select
                     defaultValue={focusMonth}
                     onChange={(e) => {
@@ -338,7 +413,7 @@ function TodoList() {
                       }
                       ChangeTaskDayOnMonth(focus, e.target.value);
                     }}
-                    className="p-2.5 text-gray-500 text-xl text-center bg-[#FBF7F0] outline-none appearance-none focus:border-indigo-600"
+                    className="p-2.5 w-40 cursor-pointer text-gray-500 text-lg text-right pr-8 z-40 bg-[#FBF7F0] outline-none appearance-none focus:border-indigo-600"
                     style={{ fontFamily: "jura" }}
                   >
                     <option value="January">January</option>
@@ -355,7 +430,7 @@ function TodoList() {
                     <option value="December">December</option>
                   </select>
                   <img
-                    className="w-3 absolute top-1 left-16 bottom-0 right-0 m-auto -rotate-90"
+                    className="w-3 absolute top-1 bottom-0 right-2 m-auto -rotate-90"
                     src={Down_arrow}
                     alt=""
                   />
@@ -389,7 +464,7 @@ function TodoList() {
                 className="w-full mt-10 border rounded-lg"
                 style={{ borderColor: "#D9DADA" }}
               >
-                <div className="text-xl flex justify-between items-center px-6 py-2">
+                <div className="text-xl flex justify-between items-center px-6 py-4">
                   <p style={{ fontFamily: "jockey" }}>
                     {focus} {focusDay}
                   </p>
@@ -397,36 +472,30 @@ function TodoList() {
                     onClick={() => {
                       setCreate(true);
                     }}
-                    className="w-6"
+                    className="w-6 cursor-pointer"
                     src={Plus}
                     alt=""
                   />
                 </div>
-                <div className="overflow-y-auto h-[55vh]">
-                  {myTodo &&
-                    myTodo.map((value, index) => {
-                      return (
-                        <CheckBox item={value} key={index} index={index} />
-                      );
-                    })}
+                <div className="overflow-y-auto h-80">
                   {create && (
-                    <div className="px-6 flex itemscenter justify-between">
+                    <div className="p-2 px-4 flex  itemscenter justify-between border-t">
                       <input
-                        className="shadow appearance-none border rounded-lg py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="bg-[#FBF7F0] p-2 outline-none w-1/2"
                         id="todo"
                         type="text"
-                        placeholder="New Todo"
+                        placeholder="Enter New Todo here"
                         onChange={(e) => {
                           setNewTodo(e.target.value);
                         }}
                       />
-                      <div className="space-x-2">
+                      <div className="space-x-2 py-2">
                         <button
                           onClick={() => {
                             setNewTodo("");
                             setCreate(false);
                           }}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg"
+                          className="border rounded px-3 text-[#F08D6E] border-[#F08D6E]"
                         >
                           Cancel
                         </button>
@@ -434,13 +503,19 @@ function TodoList() {
                           onClick={() => {
                             AddTodo();
                           }}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg"
+                          className=" rounded px-3 text-white bg-[#F08D6E]"
                         >
                           Confirm
                         </button>
                       </div>
                     </div>
                   )}
+                  {myTodo &&
+                    myTodo.map((value, index) => {
+                      return (
+                        <CheckBox item={value} key={index} index={index} />
+                      );
+                    })}
                 </div>
               </div>
             </div>
@@ -448,14 +523,14 @@ function TodoList() {
           {/* //Task Status */}
           <div
             style={{ backgroundColor: "#FBF7F0" }}
-            className="rounded-xl mt-6 mb-6 col-span-1"
+            className="rounded-xl mt-6 mb-6 col-span-1 h-[93.5%]"
           >
-            <div className="flex justify-end">
+            <div className="flex justify-end ">
               <img className="w-4/5" src={RightBackground} alt="" />
             </div>
             <div className="text-center">
               <p
-                className="text-7xl mt-12"
+                className="text-7xl "
                 style={{ color: "#75C9A8", fontFamily: "jockey" }}
               >
                 43%
@@ -466,17 +541,20 @@ function TodoList() {
               >
                 Completed Tasks
               </p>
-              <div className="mt-16 lg:mt-12 xl:mt-8 px-4 mx-auto relative">
+
+              <div className=" px-4 mx-auto relative">
                 <img
                   className="absolute w-10 right-0 bottom-0 left-0 top-0 m-auto"
                   src={Plus}
                   alt=""
                 />
-                <DonutChart />
+             
+                  <DonutChart />
+                
               </div>
-              <div className="px-6">
+              <Link to="/Task" className="px-6">
                 <button
-                  className="w-full py-1 border text-sm rounded mt-8"
+                  className="w-60 py-1 border text-lg rounded mt-5"
                   style={{
                     fontFamily: "jockey",
                     borderColor: "#768592",
@@ -485,7 +563,7 @@ function TodoList() {
                 >
                   View your tasks
                 </button>
-              </div>
+              </Link>
             </div>
           </div>
         </div>

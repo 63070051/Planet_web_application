@@ -12,10 +12,12 @@ import path from "../../path";
 import DonutChartTask from "../component/DonutCharTaskPage";
 import bgProject from "../assets/bg_project_task.png";
 import addTodo from "../assets/addTodo.png";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Rater from "react-rater";
 import "react-rater/lib/react-rater.css";
 import Loading from "../component/Loading";
+import circleTask from "../assets/circle_task.svg";
+import triangle from "../assets/triangle-noti.svg";
 function Project_task() {
   const [state, setState] = useState();
   const [modal, setModal] = useState(false);
@@ -32,6 +34,82 @@ function Project_task() {
   const obj = location.state;
   if (obj == null) {
     window.location.replace("/task");
+  }
+  const [popup, setPopup] = useState(false);
+  function RenderNotification() {
+    if (popup) {
+      return (
+        <div className="flex items-center space-x-4 relative z-20">
+          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
+            <img
+              className="w-10 cursor-pointer"
+              src={Notification}
+              onClick={() => {
+                setPopup(!popup);
+              }}
+              alt=""
+            />
+          </div>
+          <div
+            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
+            style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
+          >
+            <img
+              src={triangle}
+              className="absolute -top-4 right-[4.2rem]"
+              alt=""
+            />
+            <div
+              id="head-notification"
+              className="text-2xl py-5 px-6 font-jockey border"
+            >
+              Notifications
+            </div>
+            <div id="content-notification">
+              <div
+                id="notification-items"
+                className="border py-5 px-6 flex items-center justify-between"
+              >
+                <div className="flex items-center space-x-4">
+                  <img src={circleTask} alt="" />
+                  <div id="detail-notification" className="">
+                    <p className="font-jockey text-lg uppercase">todo list</p>
+                    <span className="font-jura text-[#8a97a0]">
+                      4 tasks now
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
+                >
+                  VIEW
+                </button>
+              </div>
+            </div>
+          </div>
+          <img className="w-10" src={Profile} alt="" />
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex items-center space-x-4 relative">
+          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
+            <img
+              className="w-10"
+              src={Notification}
+              onClick={() => {
+                setPopup(!popup);
+              }}
+              alt=""
+            />
+          </div>
+          <Link to="/Profile">
+            <img className="w-10" src={Profile} alt="" />
+          </Link>
+        </div>
+      );
+    }
   }
   function GetTask() {
     axios
@@ -367,10 +445,7 @@ function Project_task() {
                     What’s Up Today?
                   </p>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <img className="w-10" src={Notification} alt="" />
-                  <img className="w-10" src={Profile} alt="" />
-                </div>
+                <RenderNotification />
               </div>
               <div className="relative">
                 <div

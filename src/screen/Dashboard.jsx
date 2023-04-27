@@ -14,6 +14,8 @@ import path from "../../path";
 import { Link } from "react-router-dom";
 import Loading from "../component/Loading";
 import bgDash from "../assets/bg_project_task.png";
+import circleTask from "../assets/circle_task.svg";
+import triangle from "../assets/triangle-noti.svg";
 function Dashboard(props) {
   const [myTodo, setMyTodo] = useState();
   const [myNote, setMyNote] = useState();
@@ -38,7 +40,82 @@ function Dashboard(props) {
     "November",
     "December",
   ];
-
+  const [popup, setPopup] = useState(false);
+  function RenderNotification() {
+    if (popup) {
+      return (
+        <div className="flex items-center space-x-4 relative z-20">
+          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
+            <img
+              className="w-10 cursor-pointer"
+              src={Notification}
+              onClick={() => {
+                setPopup(!popup);
+              }}
+              alt=""
+            />
+          </div>
+          <div
+            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
+            style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
+          >
+            <img
+              src={triangle}
+              className="absolute -top-4 right-[4.2rem]"
+              alt=""
+            />
+            <div
+              id="head-notification"
+              className="text-2xl py-5 px-6 font-jockey border"
+            >
+              Notifications
+            </div>
+            <div id="content-notification">
+              <div
+                id="notification-items"
+                className="border py-5 px-6 flex items-center justify-between"
+              >
+                <div className="flex items-center space-x-4">
+                  <img src={circleTask} alt="" />
+                  <div id="detail-notification" className="">
+                    <p className="font-jockey text-lg uppercase">todo list</p>
+                    <span className="font-jura text-[#8a97a0]">
+                      4 tasks now
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
+                >
+                  VIEW
+                </button>
+              </div>
+            </div>
+          </div>
+          <img className="w-10" src={Profile} alt="" />
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex items-center space-x-4 relative">
+          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
+            <img
+              className="w-10"
+              src={Notification}
+              onClick={() => {
+                setPopup(!popup);
+              }}
+              alt=""
+            />
+          </div>
+          <Link to="/Profile">
+            <img className="w-10" src={Profile} alt="" />
+          </Link>
+        </div>
+      );
+    }
+  }
   function GetTask(index, project) {
     axios
       .post(
@@ -197,10 +274,7 @@ function Dashboard(props) {
                     What’s Up Today?
                   </p>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <img className="w-10" src={Notification} alt="" />
-                  <img className="w-10" src={Profile} alt="" />
-                </div>
+                <RenderNotification />
               </div>
             )}
             {/* graph */}
@@ -282,11 +356,13 @@ function Dashboard(props) {
                 </div>
                 <div className="flex items-center justify-center">
                   <div className="w-[120px] sm:w-[200px] relative">
-                    <img
-                      className="m-auto absolute top-0 right-0 bottom-0 left-0 w-6 sm:w-10"
-                      src={Plus}
-                      alt=""
-                    />
+                    <Link to="/Task">
+                      <img
+                        className="m-auto absolute top-0 right-0 bottom-0 left-0 w-6 sm:w-10"
+                        src={Plus}
+                        alt=""
+                      />
+                    </Link>
                     <DonutChart
                       todo={todo}
                       inprogress={inprogress}
@@ -299,17 +375,19 @@ function Dashboard(props) {
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 h-[50%]">
-              <div className="col-span-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 h-[52.5%] ">
+              <div className="col-span-1 h-[95%]">
                 <div
                   className="w-full border rounded-lg h-full"
                   style={{ backgroundColor: "#FBF7F0" }}
                 >
-                  <div className="text-xl flex justify-between items-center px-6 py-2">
+                  <div className="text-xl  flex justify-between items-center px-6 py-2">
                     <p style={{ fontFamily: "jockey" }}>Today</p>
-                    <img className="w-6" src={Plus} alt="" />
+                    <Link to="/Todo">
+                      <img className="w-6" src={Plus} alt="" />
+                    </Link>
                   </div>
-                  <div className="overflow-y-auto h-[150px] sm:h-[360px]">
+                  <div className="overflow-y-auto sm:h-[87%] ">
                     {myTodo &&
                       myTodo.map((value, index) => {
                         return (
@@ -324,16 +402,18 @@ function Dashboard(props) {
                   </div>
                 </div>
               </div>
-              <div className="col-span-1">
+              <div className="col-span-1 h-[95%]">
                 <div
                   className="w-full border rounded-lg h-full relative"
                   style={{ backgroundColor: "#FBF7F0" }}
                 >
                   <div className="text-xl flex justify-between items-center px-6 py-2">
                     <p style={{ fontFamily: "jockey" }}>Note</p>
-                    <img className="w-6" src={Plus} alt="" />
+                    <Link to="/AddNote">
+                      <img className="w-6" src={Plus} alt="" />
+                    </Link>
                   </div>
-                  <div className="overflow-y-scroll h-[150px]  sm:h-[360px]">
+                  <div className="overflow-y-scroll sm:h-[87%]">
                     {myNote &&
                       myNote.map((value, index) => {
                         return (

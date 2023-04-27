@@ -13,7 +13,6 @@ import addTask from "../assets/bgAddTask.png";
 import circleTask from "../assets/circle_task.svg";
 import triangle from "../assets/triangle-noti.svg";
 import Loading from "../component/Loading";
-
 function RenderTask({ task, index }) {
   let todo = task[Object.keys(task)].columns["column-1"].taskIds.length;
   let inprogress = task[Object.keys(task)].columns["column-2"].taskIds.length;
@@ -34,7 +33,7 @@ function RenderTask({ task, index }) {
     <Link
       to="/project_task"
       state={myObj}
-      className="col-span-1 h-[200px] border-2 border-[#D9DADA] p-6 flex relative "
+      className="col-span-1 rounded h-[200px] border-2 border-[#D9DADA] p-6 flex relative "
     >
       <div className="project-detail flex flex-col justify-between w-1/2 ">
         <div className="">
@@ -77,19 +76,19 @@ function Task() {
   const [modal, setModal] = useState(false);
   const [date, setDate] = useState("");
   const dateInputRef = useRef(null);
-  const [popup, setPopup] = useState(false);
   const [load, setLoad] = useState(false);
   const [percent, setPercent] = useState(0);
   const [user, setUser] = useState();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [popup, setPopup] = useState(false);
   function RenderNotification() {
     if (popup) {
       return (
         <div className="flex items-center space-x-4 relative z-20">
-          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center">
+          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
             <img
-              className="w-10"
+              className="w-10 cursor-pointer"
               src={Notification}
               onClick={() => {
                 setPopup(!popup);
@@ -98,7 +97,7 @@ function Task() {
             />
           </div>
           <div
-            className="w-[32rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
+            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
             style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
           >
             <img
@@ -128,7 +127,7 @@ function Task() {
                 </div>
                 <button
                   type="submit"
-                  className="bg-transparent py-1 px-6 border-2 border-[#F08D6E] text-[#E5725D]"
+                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
                 >
                   VIEW
                 </button>
@@ -141,7 +140,7 @@ function Task() {
     } else {
       return (
         <div className="flex items-center space-x-4 relative">
-          <div className="w-14 h-14 rounded-xl flex justify-center items-center">
+          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
             <img
               className="w-10"
               src={Notification}
@@ -151,7 +150,9 @@ function Task() {
               alt=""
             />
           </div>
-          <img className="w-10" src={Profile} alt="" />
+          <Link to="/Profile">
+            <img className="w-10" src={Profile} alt="" />
+          </Link>
         </div>
       );
     }
