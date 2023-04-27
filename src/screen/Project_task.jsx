@@ -162,7 +162,7 @@ function Project_task() {
         task: task,
       })
       .then((res) => {
-        console.log(res.data);
+        setState(task);
       })
       .catch((err) => {
         console.log(err);
@@ -232,7 +232,6 @@ function Project_task() {
         [newEndCol.id]: newEndCol,
       },
     };
-
     setState(newState);
     setDone(newState.columns["column-3"].taskIds.length);
     setInprogress(newState.columns["column-2"].taskIds.length);
@@ -263,7 +262,6 @@ function Project_task() {
       },
       tasks,
     };
-    setState(newState);
     setDone(newState.columns["column-3"].taskIds.length);
     setInprogress(newState.columns["column-2"].taskIds.length);
     setTodo(newState.columns["column-1"].taskIds.length);
@@ -293,7 +291,6 @@ function Project_task() {
       },
       tasks,
     };
-    setState(newState);
     setDone(newState.columns["column-3"].taskIds.length);
     setInprogress(newState.columns["column-2"].taskIds.length);
     setTodo(newState.columns["column-1"].taskIds.length);
@@ -301,18 +298,18 @@ function Project_task() {
   }
 
   function DeleteTask(index) {
-    if(confirm("Are you sure delete project")){
+    if (confirm("Are you sure delete project")) {
       axios
-      .delete(`${path}/mytask`, {
-        id: localStorage.getItem("id"),
-        index: index,
-      })
-      .then((res) => {
-        if(res.data == 'successfully'){
-          router('/task')
-        }
-      })
-      .catch((err) => console.log(err));
+        .delete(`${path}/mytask`, {
+          id: localStorage.getItem("id"),
+          index: index,
+        })
+        .then((res) => {
+          if (res.data == "successfully") {
+            router("/task");
+          }
+        })
+        .catch((err) => console.log(err));
     }
   }
 
