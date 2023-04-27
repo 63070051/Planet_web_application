@@ -2,7 +2,9 @@ import React from "react";
 import Plus from "../assets/plus.svg";
 import Minus from "../assets/minus.svg";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
-function Column({ column, task }) {
+
+
+function Column({ column, task , Delete, colName}) {
   return (
     <div className="col-span-1">
       <div
@@ -36,7 +38,7 @@ function Column({ column, task }) {
                         <div className="flex space-x-4 items-center ">
                           <p style={{ fontFamily: "jura" }}>{item.content}</p>
                         </div>
-                        <img src={Minus} alt="" />
+                        <img className="py-3" onClick={() => Delete(index, colName, item.id)} src={Minus} alt="" />
                       </div>
                     );
                   }}

@@ -12,7 +12,7 @@ import path from "../../path";
 import DonutChartTask from "../component/DonutCharTaskPage";
 import bgProject from "../assets/bg_project_task.png";
 import addTodo from "../assets/addTodo.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Rater from "react-rater";
 import "react-rater/lib/react-rater.css";
 import Loading from "../component/Loading";
@@ -29,6 +29,8 @@ function Project_task() {
   const [done, setDone] = useState();
   const [load, setLoad] = useState(false);
   const [percent, setPercent] = useState(0);
+  const [newTodoTask, setNewTodoTask] = useState("");
+  const router = useNavigate();
   const obj = location.state;
   if (obj == null) {
     window.location.replace("/task");
@@ -238,6 +240,82 @@ function Project_task() {
     UpdateTask(newState);
   };
 
+  function AddTodoTask() {
+    const taskTodo = Object.assign({}, state);
+    let tasks = {
+      ...state.tasks,
+    };
+    let index = Object.keys(tasks).length;
+    tasks[index + 1] = {
+      content: newTodoTask,
+      id: index + 1,
+    };
+    let col1 = {
+      taskIds: [...taskTodo.columns["column-1"].taskIds, index + 1],
+      title: taskTodo.columns["column-1"].title,
+      id: taskTodo.columns["column-1"].id,
+    };
+    const newState = {
+      ...state,
+      columns: {
+        ...state.columns,
+        ["column-1"]: col1,
+      },
+      tasks,
+    };
+    setState(newState);
+    setDone(newState.columns["column-3"].taskIds.length);
+    setInprogress(newState.columns["column-2"].taskIds.length);
+    setTodo(newState.columns["column-1"].taskIds.length);
+    UpdateTask(newState);
+  }
+
+  function DeleteTodoTask(index, column, id) {
+    console.log(state);
+    const taskTodo = Object.assign({}, state);
+    let tasks = {
+      ...state.tasks,
+    };
+    delete tasks[id];
+
+    const newTodo = [...taskTodo.columns[column].taskIds];
+    newTodo.splice(index, 1);
+    let col = {
+      taskIds: newTodo,
+      title: taskTodo.columns[column].title,
+      id: taskTodo.columns[column].id,
+    };
+    const newState = {
+      ...state,
+      columns: {
+        ...state.columns,
+        [column]: col,
+      },
+      tasks,
+    };
+    setState(newState);
+    setDone(newState.columns["column-3"].taskIds.length);
+    setInprogress(newState.columns["column-2"].taskIds.length);
+    setTodo(newState.columns["column-1"].taskIds.length);
+    UpdateTask(newState);
+  }
+
+  function DeleteTask(index) {
+    if(confirm("Are you sure delete project")){
+      axios
+      .delete(`${path}/mytask`, {
+        id: localStorage.getItem("id"),
+        index: index,
+      })
+      .then((res) => {
+        if(res.data == 'successfully'){
+          router('/task')
+        }
+      })
+      .catch((err) => console.log(err));
+    }
+  }
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="select-none">
@@ -269,7 +347,12 @@ function Project_task() {
                         ADD YOUR TO DO
                       </p>
                     </div>
-                    <input className="border-2 border-gray-300 rounded w-4/5 h-9 outline-none p-3 bg-[#FBF7F0]"></input>
+                    <input
+                      onChange={(e) => {
+                        setNewTodoTask(e.target.value);
+                      }}
+                      className="border-2 border-gray-300 rounded w-4/5 h-9 outline-none p-3 bg-[#FBF7F0]"
+                    ></input>
                     <div className="flex space-x-2 w-4/5">
                       <button
                         onClick={() => {
@@ -282,6 +365,7 @@ function Project_task() {
                       <button
                         onClick={() => {
                           setModal(false);
+                          AddTodoTask();
                         }}
                         className="border w-1/2 py-1 bg-[#E5725D] text-white rounded-sm"
                       >
@@ -375,7 +459,10 @@ function Project_task() {
                         className="text-7xl"
                         style={{ color: "#75C9A8", fontFamily: "jockey" }}
                       >
-                        {parseInt((100 / (todo + inprogress + done)) * done)}%
+                        {todo == 0 && done == 0 && inprogress == 0
+                          ? 0
+                          : parseInt((100 / (todo + inprogress + done)) * done)}
+                        %
                       </p>
                       <p
                         className="text-xl"
@@ -464,6 +551,7 @@ function Project_task() {
                   <div className="flex flex-col justify-end w-96 bg-project">
                     <div className="flex flex-col w-40">
                       <button
+                        onClick={() => DeleteTask(obj.index)}
                         type="submit"
                         className="bg-transparent border-2 text-[#E5725D] border-[#F08D6E] rounded-sm text-sm font-semibold px-6 py-1 mb-3"
                       >
@@ -493,6 +581,8 @@ function Project_task() {
                           key={columns.id}
                           column={columns}
                           task={tasks}
+                          Delete={DeleteTodoTask}
+                          colName={columnId}
                         />
                       );
                     })}

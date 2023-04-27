@@ -190,10 +190,13 @@ function Task() {
       description: description,
     };
     myObj["task"] = newTask;
+    const setNewTask = myObj.task
     axios
       .put(`${path}/mytask`, myObj)
       .then((res) => {
-        console.log(res.data);
+        if(res.data == 'successfully'){
+          setAllTask([...allTask, setNewTask])
+        }
       })
       .catch((err) => console.log(err));
   }
