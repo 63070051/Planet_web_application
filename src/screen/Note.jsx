@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import NavigationBar from "../component/NavigationBar";
-import Notification from "../assets/notification.svg";
-import Profile from "../assets/profile.svg";
 import Delete from "../assets/delete.svg";
 import "../fonts/Jura/static/Jura-Bold.ttf";
 import "../fonts/Jockey_One/JockeyOne-Regular.ttf";
@@ -11,9 +9,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import path from "../../path";
 import Loading from "../component/Loading";
-import circleTask from "../assets/circle_task.svg";
-import triangle from "../assets/triangle-noti.svg";
-import { Link } from "react-router-dom";
+import NavFile from "../component/NavFile";
 function Note() {
   const [edit, setEdit] = useState(false);
   const [deleteNote, setDeletenote] = useState(false);
@@ -24,98 +20,20 @@ function Note() {
   const [user, setUser] = useState();
   const [load, setLoad] = useState(false);
   const [percent, setPercent] = useState(0);
-  const [popup, setPopup] = useState(false);
-  function RenderNotification() {
-    if (popup) {
-      return (
-        <div className="flex items-center space-x-4 relative z-20">
-          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
-            <img
-              className="w-10 cursor-pointer"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <div
-            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
-            style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
-          >
-            <img
-              src={triangle}
-              className="absolute -top-4 right-[4.2rem]"
-              alt=""
-            />
-            <div
-              id="head-notification"
-              className="text-2xl py-5 px-6 font-jockey border"
-            >
-              Notifications
-            </div>
-            <div id="content-notification">
-              <div
-                id="notification-items"
-                className="border py-5 px-6 flex items-center justify-between"
-              >
-                <div className="flex items-center space-x-4">
-                  <img src={circleTask} alt="" />
-                  <div id="detail-notification" className="">
-                    <p className="font-jockey text-lg uppercase">todo list</p>
-                    <span className="font-jura text-[#8a97a0]">
-                      4 tasks now
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
-                >
-                  VIEW
-                </button>
-              </div>
-            </div>
-          </div>
-          <img className="w-10" src={Profile} alt="" />
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex items-center space-x-4 relative">
-          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
-            <img
-              className="w-10"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <Link to="/Profile">
-            <img className="w-10" src={Profile} alt="" />
-          </Link>
-        </div>
-      );
-    }
-  }
+
   if (myNote == null) {
     window.location.replace("/AllNotes");
   }
   function UpdateNote() {
     axios
-      .post(
-        "https://2a4ce4nw26.execute-api.us-east-1.amazonaws.com/Dev/updatenote",
-        {
-          id: localStorage.getItem("id"),
-          index: myNote.index,
-          note: {
-            topic: topic,
-            description: description,
-          },
-        }
-      )
+      .post(`${path}/updatenote`, {
+        id: localStorage.getItem("id"),
+        index: myNote.index,
+        note: {
+          topic: topic,
+          description: description,
+        },
+      })
       .then((res) => {})
       .catch((err) => {
         console.log(err);
@@ -163,6 +81,21 @@ function Note() {
         console.log(err);
       });
   }
+  function DeleteNote() {
+    axios
+      .post(`${path}/deletenote`, {
+        id: localStorage.getItem("id"),
+        index: myNote.index,
+      })
+      .then((res) => {
+        if (res.data == "successfully") {
+          window.location.replace("AllNotes");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   return (
     <div className="selcet-none" style={{ backgroundColor: "#EFEADE" }}>
       {load ? (
@@ -174,25 +107,13 @@ function Note() {
           <NavigationBar />
 
           <div className="col-span-6 lg:col-span-5 mr-10 ml-10 px-4 h-full">
-            {user && (
-              <div className="flex justify-between items-center h-[15%]">
-                <div>
-                  <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                    Welcome back, {user.firstname + " " + user.lastname}
-                  </p>
-                  <p
-                    className="text-xl"
-                    style={{ fontFamily: "Kumbh_Sans_Regular" }}
-                  >
-                    What’s Up Today?
-                  </p>
-                </div>
-                <RenderNotification />
-              </div>
-            )}
+            <NavFile status={localStorage.getItem('incom')} allstatus={localStorage.getItem('allstatus')} />
 
             {/* Note */}
-            <div className=" rounded-xl h-[80%] p-8 space-y-5 " style={{ backgroundColor: "#FBF7F0" }}>
+            <div
+              className=" rounded-xl h-[80%] p-8 space-y-5 "
+              style={{ backgroundColor: "#FBF7F0" }}
+            >
               <div>
                 <div className="text-xl flex justify-between items-center py-2">
                   <p className="text-2xl" style={{ fontFamily: "jockey" }}>
@@ -250,7 +171,7 @@ function Note() {
                     <button
                       onClick={() => {
                         if (confirm("Are you sure delete")) {
-                        } else {
+                          DeleteNote();
                         }
                       }}
                     >

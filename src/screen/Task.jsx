@@ -13,12 +13,17 @@ import addTask from "../assets/bgAddTask.png";
 import circleTask from "../assets/circle_task.svg";
 import triangle from "../assets/triangle-noti.svg";
 import Loading from "../component/Loading";
+import NavFile from "../component/NavFile";
+import moment from "moment";
+import Rater from "react-rater";
+import "react-rater/lib/react-rater.css";
+
 function RenderTask({ task, index }) {
   let todo = task[Object.keys(task)].columns["column-1"].taskIds.length;
   let inprogress = task[Object.keys(task)].columns["column-2"].taskIds.length;
   let done = task[Object.keys(task)].columns["column-3"].taskIds.length;
   let cal;
-  if ((todo == 0 && inprogress == 0) || done == 0) {
+  if (done == 0) {
     cal = 0;
   } else {
     cal = 100 / (todo + inprogress + done);
@@ -31,6 +36,9 @@ function RenderTask({ task, index }) {
   };
   return (
     <Link
+      onClick={() => {
+        UpdateFocus(Object.keys(task)[0], index);
+      }}
       to="/project_task"
       state={myObj}
       className="col-span-1 rounded h-[200px] border-2 border-[#D9DADA] p-6 flex relative "
@@ -47,15 +55,17 @@ function RenderTask({ task, index }) {
             id="detail-project"
             className="h-12 mt-1 font-jura text-sm font-bold text-[#B5B7B9]"
           >
-            lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur,
-            cupiditate.
+            {task[Object.keys(task)].description}
           </p>
+          {task[Object.keys(task)].star != 0 ? (
+            <Rater className="flex pb-4 text-xl" rating={task[Object.keys(task)].star} />
+          ) : null}
         </div>
         <p
           id="date-project"
           className="font-jura text-md font-bold text-[#E5725D]"
         >
-          26 Feb, 2022
+          {moment(task[Object.keys(task)].date).format("LL")}
         </p>
       </div>
       <div className="w-1/2 flex justify-center items-center relative">
@@ -65,10 +75,28 @@ function RenderTask({ task, index }) {
         >
           {percent}
         </p>
-        <DonutChartTask task={task[Object.keys(task)]} cutout={"70%"} />
+        <DonutChartTask task={task[Object.keys(task)]} cutout={"75%"} />
       </div>
     </Link>
   );
+}
+
+function UpdateFocus(project, index) {
+  axios
+    .post(`${path}/focusproject`, {
+      id: localStorage.getItem("id"),
+      focus: {
+        id: localStorage.getItem("id"),
+        index: index,
+        project: project,
+      },
+    })
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 function Task() {
@@ -82,81 +110,7 @@ function Task() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [popup, setPopup] = useState(false);
-  function RenderNotification() {
-    if (popup) {
-      return (
-        <div className="flex items-center space-x-4 relative z-20">
-          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
-            <img
-              className="w-10 cursor-pointer"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <div
-            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
-            style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
-          >
-            <img
-              src={triangle}
-              className="absolute -top-4 right-[4.2rem]"
-              alt=""
-            />
-            <div
-              id="head-notification"
-              className="text-2xl py-5 px-6 font-jockey border"
-            >
-              Notifications
-            </div>
-            <div id="content-notification">
-              <div
-                id="notification-items"
-                className="border py-5 px-6 flex items-center justify-between"
-              >
-                <div className="flex items-center space-x-4">
-                  <img src={circleTask} alt="" />
-                  <div id="detail-notification" className="">
-                    <p className="font-jockey text-lg uppercase">todo list</p>
-                    <span className="font-jura text-[#8a97a0]">
-                      4 tasks now
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
-                >
-                  VIEW
-                </button>
-              </div>
-            </div>
-          </div>
-          <img className="w-10" src={Profile} alt="" />
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex items-center space-x-4 relative">
-          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
-            <img
-              className="w-10"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <Link to="/Profile">
-            <img className="w-10" src={Profile} alt="" />
-          </Link>
-        </div>
-      );
-    }
-  }
+
   const handleChange = (e) => {
     setDate(e.target.value);
     console.log(e.target.value);
@@ -188,14 +142,15 @@ function Task() {
       tasks: {},
       date: date,
       description: description,
+      star: 0,
     };
     myObj["task"] = newTask;
-    const setNewTask = myObj.task
+    const setNewTask = myObj.task;
     axios
       .put(`${path}/mytask`, myObj)
       .then((res) => {
-        if(res.data == 'successfully'){
-          setAllTask([...allTask, setNewTask])
+        if (res.data == "successfully") {
+          setAllTask([...allTask, setNewTask]);
         }
       })
       .catch((err) => console.log(err));
@@ -342,45 +297,10 @@ function Task() {
           <NavigationBar />
           {/* // Todo Body */}
           <div className="col-span-4 px-4 mx-10 h-full">
-            <div className="flex justify-between items-center h-[15%]">
-              <div>
-                <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                  Welcome back, Kwanpf
-                </p>
-                <p
-                  className="text-xl"
-                  style={{ fontFamily: "Kumbh_Sans_Regular" }}
-                >
-                  What’s Up Today?
-                </p>
-              </div>
-              <RenderNotification />
-              {/* <div className="flex items-center space-x-4 relative z-20">
-                <img className="w-10" src={Notification} onClick={()=>{setPopup(!popup)}} alt="" />
-                {
-                  popup &&
-                  (
-                  <div className="w-[32rem] h-[25rem] absolute top-[4rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl" style={{"box-shadow" : "0px 5px 15px rgba(0, 0, 0, 0.1)"}} >
-                  <img src={triangle} className="absolute -top-4 right-[3.8rem]" alt="" />
-                  <div id="head-notification" className="text-2xl py-5 px-6 font-jockey border">Notifications</div>
-                  <div id="content-notification">
-                    <div id="notification-items" className="border py-5 px-6 flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <img src={circleTask} alt="" />
-                        <div id="detail-notification" className="">
-                          <p className="font-jockey text-lg uppercase">todo list</p>
-                          <span className="font-jura text-[#8a97a0]">4 tasks now</span>
-                        </div>
-                      </div>
-                      <button type="submit" className="bg-transparent py-1 px-6 border-2 border-[#F08D6E] text-[#E5725D]">VIEW</button>
-                    </div>
-                  </div>
-                </div>)
-                }
-                
-                <img className="w-10" src={Profile} alt="" />
-              </div> */}
-            </div>
+            <NavFile
+              status={localStorage.getItem("incom")}
+              allstatus={localStorage.getItem("allstatus")}
+            />
             <div
               className="h-[35%] sm:h-[80%] rounded-2xl relative pt-8 px-8 pb-6"
               style={{ backgroundColor: "#FBF7F0" }}
