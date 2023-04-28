@@ -6,16 +6,13 @@ import DonutChart from "../component/DonutChart";
 import Plus from "../assets/plus.svg";
 import Minus from "../assets/minus.svg";
 import NavigationBar from "../component/NavigationBar";
-import Notification from "../assets/notification.svg";
-import Profile from "../assets/profile.svg";
 import Edit_note from "../assets/edit_note.svg";
 import axios from "axios";
 import path from "../../path";
 import { Link } from "react-router-dom";
 import Loading from "../component/Loading";
 import bgDash from "../assets/bg_project_task.png";
-import circleTask from "../assets/circle_task.svg";
-import triangle from "../assets/triangle-noti.svg";
+import NavFile from "../component/NavFile";
 function Dashboard(props) {
   const [myTodo, setMyTodo] = useState();
   const [myNote, setMyNote] = useState();
@@ -26,6 +23,8 @@ function Dashboard(props) {
   const [inprogress, setInprogress] = useState();
   const [percent, setPercent] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [inComplete, setInComplete] = useState(0);
+  const [allStatus, setAllStatus] = useState(0);
   const MONTH = [
     "January",
     "Febuary",
@@ -41,81 +40,7 @@ function Dashboard(props) {
     "December",
   ];
   const [popup, setPopup] = useState(false);
-  function RenderNotification() {
-    if (popup) {
-      return (
-        <div className="flex items-center space-x-4 relative z-20">
-          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
-            <img
-              className="w-10 cursor-pointer"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <div
-            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
-            style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
-          >
-            <img
-              src={triangle}
-              className="absolute -top-4 right-[4.2rem]"
-              alt=""
-            />
-            <div
-              id="head-notification"
-              className="text-2xl py-5 px-6 font-jockey border"
-            >
-              Notifications
-            </div>
-            <div id="content-notification">
-              <div
-                id="notification-items"
-                className="border py-5 px-6 flex items-center justify-between"
-              >
-                <div className="flex items-center space-x-4">
-                  <img src={circleTask} alt="" />
-                  <div id="detail-notification" className="">
-                    <p className="font-jockey text-lg uppercase">todo list</p>
-                    <span className="font-jura text-[#8a97a0]">
-                      4 tasks now
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
-                >
-                  VIEW
-                </button>
-              </div>
-            </div>
-          </div>
-          <img className="w-10" src={Profile} alt="" />
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex items-center space-x-4 relative">
-          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
-            <img
-              className="w-10"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <Link to="/Profile">
-            <img className="w-10" src={Profile} alt="" />
-          </Link>
-        </div>
-      );
-    }
-  }
+
   function GetTask(index, project) {
     axios
       .post(
@@ -153,9 +78,13 @@ function Dashboard(props) {
       .post(`${path}/user`, { id: localStorage.getItem("id") })
       .then((res) => {
         setUser(res.data);
-        if (Object.keys(res.data.focus).length > 0) {
+        if (res.data.focus != undefined) {
           GetTask(res.data.focus.index, res.data.focus.project);
         } else {
+          console.log(1);
+          setTimeout(() => {
+            setLoading(true);
+          }, 400);
         }
       })
       .catch((err) => {
@@ -170,8 +99,18 @@ function Dashboard(props) {
         month: MONTH[new Date().getMonth()],
       })
       .then((res) => {
+        let count = 0;
         if (Object.keys(res.data).length != 0) {
           setMyTodo(res.data.userTodo);
+          setAllStatus(res.data.userTodo.length)
+          res.data.userTodo.forEach((element) => {
+            if (!element.status) {
+              count = count + 1;
+            }
+          });
+          localStorage.setItem('incom', count)
+          localStorage.setItem('allstatus', res.data.userTodo.length)
+          setInComplete(count);
         }
       })
       .catch((e) => {
@@ -203,7 +142,11 @@ function Dashboard(props) {
         index: index,
         status: status,
       })
-      .then(() => {})
+      .then((res) => {
+        if (res.data == "successfully") {
+          GetTodo();
+        }
+      })
       .catch(() => {
         console.log(err);
       });
@@ -222,7 +165,7 @@ function Dashboard(props) {
         >
           <input
             type="checkbox"
-            checked={checked}
+            defaultChecked={status}
             onChange={() => {
               UpdateStatus(index1, !checked);
             }}
@@ -261,120 +204,113 @@ function Dashboard(props) {
           <NavigationBar />
           {/* // Todo Body */}
           <div className="col-span-4 px-4 h-full">
-            {user && (
-              <div className="flex justify-between items-center h-[15%]">
-                <div>
-                  <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                    Welcome back, {user.firstname + " " + user.lastname}
-                  </p>
-                  <p
-                    className="text-xl"
-                    style={{ fontFamily: "Kumbh_Sans_Regular" }}
-                  >
-                    What’s Up Today?
-                  </p>
-                </div>
-                <RenderNotification />
-              </div>
-            )}
+            <NavFile status={inComplete} allstatus={allStatus}/>
             {/* graph */}
-            {state && (
-              <div
-                className="grid grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-4 h-[35%] sm:h-[30%] rounded-2xl relative"
-                style={{ backgroundColor: "#FBF7F0" }}
-              >
-                <div className="rounded-2xl cols-span-1 flex items-center justify-center">
-                  <div className="text-center">
-                    <p
-                      className="text-7xl"
-                      style={{ color: "#75C9A8", fontFamily: "jockey" }}
-                    >
-                      {parseInt((100 / (done + inprogress + todo)) * done)}%
-                    </p>
-                    <p
-                      className="text-xl"
-                      style={{ color: "#B5B7B9", fontFamily: "jockey" }}
-                    >
-                      Completed Tasks
-                    </p>
-                  </div>
-                </div>
-                <div className="h-full sm:flex items-center justify-center hidden">
-                  <div className="space-y-3">
-                    <div>
-                      <div className="flex space-x-3 items-center">
-                        <div className="w-5 h-5 rounded-full bg-[#FFAA9B]"></div>
-                        <p
-                          className="text-2xl font-light"
-                          style={{ fontFamily: "jockey" }}
-                        >
-                          TO DO
-                        </p>
-                      </div>
+            <div
+              className=" h-[35%] sm:h-[30%] rounded-2xl relative"
+              style={{ backgroundColor: "#FBF7F0" }}
+            >
+              {state ? (
+                <div className="grid grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-4 h-full">
+                  <div className="rounded-2xl cols-span-1 flex items-center justify-center">
+                    <div className="text-center">
                       <p
-                        style={{ fontFamily: "jura" }}
-                        className="ml-8 text-sm text-gray-400"
+                        className="text-7xl"
+                        style={{ color: "#75C9A8", fontFamily: "jockey" }}
                       >
-                        {todo} tasks now
+                        {parseInt((100 / (done + inprogress + todo)) * done)}%
                       </p>
-                    </div>
-                    <div>
-                      <div className="flex space-x-3 items-center">
-                        <div className="w-5 h-5 rounded-full bg-[#CFCFAB]"></div>
-                        <p
-                          className="text-2xl font-light"
-                          style={{ fontFamily: "jockey" }}
-                        >
-                          IN PROGRESS
-                        </p>
-                      </div>
                       <p
-                        style={{ fontFamily: "jura" }}
-                        className="text-sm text-gray-400 ml-8"
+                        className="text-xl"
+                        style={{ color: "#B5B7B9", fontFamily: "jockey" }}
                       >
-                        {inprogress} tasks now
-                      </p>
-                    </div>
-                    <div>
-                      <div className="flex space-x-3 items-center">
-                        <div className="w-5 h-5 rounded-full bg-[#75C9A8]"></div>
-                        <p
-                          className="text-2xl font-light"
-                          style={{ fontFamily: "jockey" }}
-                        >
-                          DONE
-                        </p>
-                      </div>
-                      <p
-                        style={{ fontFamily: "jura" }}
-                        className="ml-8 text-sm text-gray-400"
-                      >
-                        {done} completed
+                        Completed Tasks
                       </p>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <div className="w-[120px] sm:w-[200px] relative">
-                    <Link to="/Task">
-                      <img
-                        className="m-auto absolute top-0 right-0 bottom-0 left-0 w-6 sm:w-10"
-                        src={Plus}
-                        alt=""
+                  <div className="h-full sm:flex items-center justify-center hidden">
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex space-x-3 items-center">
+                          <div className="w-5 h-5 rounded-full bg-[#FFAA9B]"></div>
+                          <p
+                            className="text-2xl font-light"
+                            style={{ fontFamily: "jockey" }}
+                          >
+                            TO DO
+                          </p>
+                        </div>
+                        <p
+                          style={{ fontFamily: "jura" }}
+                          className="ml-8 text-sm text-gray-400"
+                        >
+                          {todo} tasks now
+                        </p>
+                      </div>
+                      <div>
+                        <div className="flex space-x-3 items-center">
+                          <div className="w-5 h-5 rounded-full bg-[#CFCFAB]"></div>
+                          <p
+                            className="text-2xl font-light"
+                            style={{ fontFamily: "jockey" }}
+                          >
+                            IN PROGRESS
+                          </p>
+                        </div>
+                        <p
+                          style={{ fontFamily: "jura" }}
+                          className="text-sm text-gray-400 ml-8"
+                        >
+                          {inprogress} tasks now
+                        </p>
+                      </div>
+                      <div>
+                        <div className="flex space-x-3 items-center">
+                          <div className="w-5 h-5 rounded-full bg-[#75C9A8]"></div>
+                          <p
+                            className="text-2xl font-light"
+                            style={{ fontFamily: "jockey" }}
+                          >
+                            DONE
+                          </p>
+                        </div>
+                        <p
+                          style={{ fontFamily: "jura" }}
+                          className="ml-8 text-sm text-gray-400"
+                        >
+                          {done} completed
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center">
+                    <div className="w-[120px] sm:w-[200px] relative">
+                      <Link to="/Task">
+                        <img
+                          className="m-auto absolute top-0 right-0 bottom-0 left-0 w-6 sm:w-10"
+                          src={Plus}
+                          alt=""
+                        />
+                      </Link>
+                      <DonutChart
+                        todo={todo}
+                        inprogress={inprogress}
+                        done={done}
                       />
-                    </Link>
-                    <DonutChart
-                      todo={todo}
-                      inprogress={inprogress}
-                      done={done}
-                    />
+                    </div>
+                  </div>
+                  <div className="w-full hidden lg:block">
+                    <img src={bgDash} alt="" />
                   </div>
                 </div>
-                <div className="w-full hidden lg:block">
-                  <img src={bgDash} alt="" />
+              ) : (
+                <div className="h-full flex items-center justify-center">
+                  <p className="text-4xl" style={{ fontFamily: "jura" }}>
+                    You not have focus project
+                  </p>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 h-[52.5%] ">
               <div className="col-span-1 h-[95%]">
                 <div

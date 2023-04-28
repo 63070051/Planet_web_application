@@ -113,15 +113,14 @@ export default function Profile() {
             .catch((err) => {
               console.log(err);
             });
-        }
-        else{
+        } else {
           setTimeout(() => {
             setLoad(true);
           }, 400);
         }
         setUser(res.data);
-        setFirstName(res.data.firstname)
-        setLastName(res.data.lastname)
+        setFirstName(res.data.firstname);
+        setLastName(res.data.lastname);
       })
       .catch((err) => {
         console.log(err);
@@ -234,7 +233,15 @@ export default function Profile() {
                         </button>
                       )}
                       {logout && (
-                        <button className="logout text-sm px-4 py-1 w-full rounded-sm mt-3 text-white  bg-[#F08D6E]">
+                        <button
+                          onClick={() => {
+                            if (confirm("Are you sure Logout")) {
+                              localStorage.removeItem("id");
+                              window.location.replace("/");
+                            }
+                          }}
+                          className="logout text-sm px-4 py-1 w-full rounded-sm mt-3 text-white  bg-[#F08D6E]"
+                        >
                           LOGOUT
                         </button>
                       )}

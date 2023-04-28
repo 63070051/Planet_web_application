@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .react-rater-star{
-    font-size: 2.5rem;
+    /* font-size: 2.5rem; */
     /* color:red !important; */
 }
 .will-be-active{

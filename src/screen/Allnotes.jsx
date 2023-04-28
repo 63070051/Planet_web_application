@@ -1,95 +1,19 @@
 import React, { useState, useEffect } from "react";
 import NavigationBar from "../component/NavigationBar";
-import Notification from "../assets/notification.svg";
-import Profile from "../assets/profile.svg";
 import { Link } from "react-router-dom";
 import "../style.css";
 import axios from "axios";
 import path from "../../path";
 import Loading from "../component/Loading";
-import circleTask from "../assets/circle_task.svg";
-import triangle from "../assets/triangle-noti.svg";
+import NavFile from "../component/NavFile";
+import moment from "moment";
 export default function Allnotes() {
   const [data, setData] = useState();
   const [user, setUser] = useState();
   const [load, setLoad] = useState(false);
   const [percent, setPercent] = useState(0);
   const [popup, setPopup] = useState(false);
-  function RenderNotification() {
-    if (popup) {
-      return (
-        <div className="flex items-center space-x-4 relative z-20">
-          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
-            <img
-              className="w-10 cursor-pointer"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <div
-            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
-            style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
-          >
-            <img
-              src={triangle}
-              className="absolute -top-4 right-[4.2rem]"
-              alt=""
-            />
-            <div
-              id="head-notification"
-              className="text-2xl py-5 px-6 font-jockey border"
-            >
-              Notifications
-            </div>
-            <div id="content-notification">
-              <div
-                id="notification-items"
-                className="border py-5 px-6 flex items-center justify-between"
-              >
-                <div className="flex items-center space-x-4">
-                  <img src={circleTask} alt="" />
-                  <div id="detail-notification" className="">
-                    <p className="font-jockey text-lg uppercase">todo list</p>
-                    <span className="font-jura text-[#8a97a0]">
-                      4 tasks now
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
-                >
-                  VIEW
-                </button>
-              </div>
-            </div>
-          </div>
-          <img className="w-10" src={Profile} alt="" />
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex items-center space-x-4 relative">
-          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
-            <img
-              className="w-10"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <Link to="/Profile">
-            <img className="w-10" src={Profile} alt="" />
-          </Link>
-        </div>
-      );
-    }
-  }
+  const [length, setLength] = useState(0);
   useEffect(() => {
     GetUser();
     GetNote();
@@ -110,6 +34,7 @@ export default function Allnotes() {
         }
       )
       .then((res) => {
+        setLength(res.data.length);
         setData(res.data);
         setTimeout(() => {
           setLoad(true);
@@ -155,7 +80,7 @@ export default function Allnotes() {
           className="text-lg text-[#B5B7B9] break-words truncate"
           style={{ fontFamily: "jura" }}
         >
-          {props.item.description}
+          {moment(props.item.date).format("LL")}
         </p>
       </Link>
     );
@@ -167,28 +92,23 @@ export default function Allnotes() {
         <div className="h-full grid grid-cols-6 bg-[#EFEADE]">
           <NavigationBar />
           <div className="col-span-6 lg:col-span-5 mr-10 ml-10 px-4 h-full">
-            {user && (
-              <div className="flex justify-between items-center h-[15%]">
-                <div>
-                  <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                    Welcome back, {user.firstname + " " + user.lastname}
-                  </p>
-                  <p
-                    className="text-xl"
-                    style={{ fontFamily: "Kumbh_Sans_Regular" }}
-                  >
-                    What’s Up Today?
-                  </p>
-                </div>
-                <RenderNotification />
-              </div>
-            )}
-            <div className="rounded-lg h-[80%]" style={{ backgroundColor: "#FBF7F0" }}>
+            <NavFile
+              status={localStorage.getItem("incom")}
+              allstatus={localStorage.getItem("allstatus")}
+            />
+            <div
+              className="rounded-lg h-[80%]"
+              style={{ backgroundColor: "#FBF7F0" }}
+            >
               <div className="h-[4rem] flex justify-between pt-8 pl-8 pr-10 items-center">
                 <p className="text-2xl" style={{ fontFamily: "jockey" }}>
                   My Notes
                 </p>
-                <Link to="/AddNote"
+                <Link
+                  to="/AddNote"
+                  state={{
+                    index: length,
+                  }}
                   type="submit"
                   className="px-8 bg-[#F08D6E]  text-white text-md rounded-sm"
                 >

@@ -13,6 +13,19 @@ export default function Forgot() {
           <div className="space-y-12 w-72">
             <p className="text-3xl font-bold text-center">Reset Password</p>
             <div className="space-y-6">
+            <div>
+                <label
+                  className="block text-gray-400 text-sm mb-2"
+                  htmlFor="email"
+                >
+                  Enter Email
+                </label>
+                <input
+                  className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="email"
+                  type="text"
+                />
+              </div>
               <div>
                 <label
                   className="block text-gray-400 text-sm mb-2"
@@ -22,9 +35,8 @@ export default function Forgot() {
                 </label>
                 <input
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="username"
-                  type="text"
-                  // placeholder="Username"
+                  id="passoword"
+                  type="password"
                 />
               </div>
               <div>
@@ -36,9 +48,8 @@ export default function Forgot() {
                 </label>
                 <input
                   className="shadow appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="password"
+                  id="cpassword"
                   type="password"
-                  // placeholder="Username"
                 />
               </div>
               <div className="space-y-4">
@@ -54,7 +65,7 @@ export default function Forgot() {
           </div>
           <p className="text-sm mt-24 text-center">
             Change your mind?{" "}
-            <Link to="/Signin" style={{ color: "#E5725D" }}>
+            <Link to="/Login" style={{ color: "#E5725D" }}>
               SIGN IN
             </Link>
           </p>

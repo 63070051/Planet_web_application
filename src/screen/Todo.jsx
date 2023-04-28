@@ -1,25 +1,19 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import Hamberger from "../component/Hamburger";
 import DonutChart from "../component/DonutChart";
 import "../fonts/Jockey_One/JockeyOne-Regular.ttf";
 import "../fonts/Kumbh_Sans/static/KumbhSans-Regular.ttf";
 import "../fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf";
 import RightBackground from "../assets/TodoRightBackground.png";
-import Logo from "../assets/logo.svg";
 import Plus from "../assets/plus.svg";
 import Minus from "../assets/minus.svg";
 import NavigationBar from "../component/NavigationBar";
-import Notification from "../assets/notification.svg";
-import Profile from "../assets/profile.svg";
-import H_bg from "../assets/hamburger_bg.png";
 import Down_arrow from "../assets/down_arrow.svg";
 import moment from "moment";
 import axios from "axios";
 import path from "../../path";
 import Loading from "../component/Loading";
-import circleTask from "../assets/circle_task.svg";
-import triangle from "../assets/triangle-noti.svg";
 import { Link } from "react-router-dom";
+import NavFile from "../component/NavFile";
 const MONTH = [
   "January",
   "Febuary",
@@ -41,6 +35,10 @@ function TodoList() {
   const [focusDay, setFocusDay] = useState(
     new Date().toLocaleString("en-us", { weekday: "long" })
   );
+  const [state, setState] = useState();
+  const [done, setDone] = useState();
+  const [todo, setTodo] = useState();
+  const [inprogress, setInprogress] = useState();
   const [focusCalendar, setFocusCalendar] = useState();
   const [allCalendar, setAllCalendar] = useState();
   const [myTodo, setMyTodo] = useState();
@@ -50,97 +48,17 @@ function TodoList() {
   const [percent, setPercent] = useState(0);
   const [load, setLoad] = useState(false);
   const [popup, setPopup] = useState(false);
-  function RenderNotification() {
-    if (popup) {
-      return (
-        <div className="flex items-center space-x-4 relative z-20">
-          <div className="w-14 h-14 bg-[#FBF7F0] rounded-xl shadow-sm flex justify-center items-center cursor-pointer">
-            <img
-              className="w-10 cursor-pointer"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <div
-            className="w-[28rem] h-[25rem] absolute top-[4.8rem] right-0 bg-[#FBF7F0] border-[#E3DDDD] rounded-xl"
-            style={{ "box-shadow": "0px 5px 15px rgba(0, 0, 0, 0.1)" }}
-          >
-            <img
-              src={triangle}
-              className="absolute -top-4 right-[4.2rem]"
-              alt=""
-            />
-            <div
-              id="head-notification"
-              className="text-2xl py-5 px-6 font-jockey border"
-            >
-              Notifications
-            </div>
-            <div id="content-notification">
-              <div
-                id="notification-items"
-                className="border py-5 px-6 flex items-center justify-between"
-              >
-                <div className="flex items-center space-x-4">
-                  <img src={circleTask} alt="" />
-                  <div id="detail-notification" className="">
-                    <p className="font-jockey text-lg uppercase">todo list</p>
-                    <span className="font-jura text-[#8a97a0]">
-                      4 tasks now
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="text-sm bg-transparent py-1 px-6 border-2 rounded border-[#F08D6E] text-[#E5725D]"
-                >
-                  VIEW
-                </button>
-              </div>
-            </div>
-          </div>
-          <img className="w-10" src={Profile} alt="" />
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex items-center space-x-4 relative">
-          <div className=" cursor-pointer w-14 h-14 rounded-xl flex justify-center items-center">
-            <img
-              className="w-10"
-              src={Notification}
-              onClick={() => {
-                setPopup(!popup);
-              }}
-              alt=""
-            />
-          </div>
-          <Link to="/Profile">
-            <img className="w-10" src={Profile} alt="" />
-          </Link>
-        </div>
-      );
-    }
-  }
-  function GetUser() {
-    axios
-      .post(`${path}/user`, { id: localStorage.getItem("id") })
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  function GetCalendar() {
+  const [allStatus, setAllStatus] = useState(0);
+  const [inComplete, setInComplete] = useState(0);
+  function GetTask(index, project) {
     axios
       .post(
-        `${path}/calendar`,
-        { id: localStorage.getItem("id") },
+        `${path}/mytask`,
+        {
+          id: localStorage.getItem("id"),
+          index: index,
+          project: project,
+        },
         {
           onDownloadProgress: (progressEvent) => {
             let percentCompleted = Math.round(
@@ -151,11 +69,43 @@ function TodoList() {
         }
       )
       .then((res) => {
-        setAllCalendar(res.data);
-        setFocusCalendar(res.data[focusMonth]);
+        setState(res.data);
+        setDone(res.data.columns["column-3"].taskIds.length);
+        setInprogress(res.data.columns["column-2"].taskIds.length);
+        setTodo(res.data.columns["column-1"].taskIds.length);
+
         setTimeout(() => {
           setLoad(true);
         }, 400);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  function GetUser() {
+    axios
+      .post(`${path}/user`, { id: localStorage.getItem("id") })
+      .then((res) => {
+        setUser(res.data);
+        if (res.data.focus != undefined) {
+          GetTask(res.data.focus.index, res.data.focus.project);
+        } else {
+          setTimeout(() => {
+            setLoad(true);
+          }, 400);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function GetCalendar() {
+    axios
+      .post(`${path}/calendar`, { id: localStorage.getItem("id") })
+      .then((res) => {
+        setAllCalendar(res.data);
+        setFocusCalendar(res.data[focusMonth]);
       })
       .catch((e) => {
         console.log(e);
@@ -169,8 +119,20 @@ function TodoList() {
         month: focusMonth,
       })
       .then((res) => {
+        let count = 0;
         if (Object.keys(res.data).length != 0) {
           setMyTodo(res.data.userTodo);
+          if (focus == new Date().getDate()) {
+            setAllStatus(res.data.userTodo.length);
+            res.data.userTodo.forEach((element) => {
+              if (!element.status) {
+                count = count + 1;
+              }
+            });
+            localStorage.setItem("incom", count);
+            localStorage.setItem("allstatus", res.data.userTodo.length);
+            setInComplete(count);
+          }
         }
       })
       .catch((e) => {
@@ -301,7 +263,9 @@ function TodoList() {
         index: index,
         status: status,
       })
-      .then(() => {})
+      .then(() => {
+        GetTodo();
+      })
       .catch(() => {
         console.log(err);
       });
@@ -322,6 +286,7 @@ function TodoList() {
         if (res.data == "successfully") {
           setNewTodo("");
           setCreate(false);
+          GetTodo();
         }
       })
       .catch((err) => {
@@ -334,7 +299,10 @@ function TodoList() {
       todo: newTodo,
       status: false,
     };
-    let array = myTodo;
+    let array = [];
+    if (myTodo) {
+      array = myTodo;
+    }
     array.push(setTodo);
     setMyTodo(array);
     setCreate(false);
@@ -348,6 +316,7 @@ function TodoList() {
       .then((res) => {
         if (res.data == "successfully") {
           setNewTodo("");
+          GetTodo();
         }
       })
       .catch((err) => {
@@ -366,25 +335,13 @@ function TodoList() {
           {/* // Navigation Bar */}
           <NavigationBar />
           {/* // Todo Body */}
-          <div className="col-span-3 px-2 pt-6">
-            {user && (
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-2xl" style={{ fontFamily: "jockey" }}>
-                    Welcome back, {user.firstname + " " + user.lastname}
-                  </p>
-                  <p
-                    className="text-xl"
-                    style={{ fontFamily: "Kumbh_Sans_Regular" }}
-                  >
-                    What’s Up Today?
-                  </p>
-                </div>
-                <RenderNotification />
-              </div>
-            )}
+          <div className="col-span-3 px-2">
+            <NavFile
+              status={localStorage.getItem("incom")}
+              allstatus={localStorage.getItem("allstatus")}
+            />
             <div
-              className="mt-6 rounded-xl pt-8 px-8 pb-6 h-[85%]"
+              className="rounded-xl px-8 pb-6 pt-6 h-[81%]"
               style={{ backgroundColor: "#FBF7F0" }}
             >
               <div className="flex items-center justify-between">
@@ -528,43 +485,44 @@ function TodoList() {
             <div className="flex justify-end ">
               <img className="w-4/5" src={RightBackground} alt="" />
             </div>
-            <div className="text-center">
-              <p
-                className="text-7xl "
-                style={{ color: "#75C9A8", fontFamily: "jockey" }}
-              >
-                43%
-              </p>
-              <p
-                className="text-xl"
-                style={{ color: "#B5B7B9", fontFamily: "jockey" }}
-              >
-                Completed Tasks
-              </p>
-
-              <div className=" px-4 mx-auto relative">
-                <img
-                  className="absolute w-10 right-0 bottom-0 left-0 top-0 m-auto"
-                  src={Plus}
-                  alt=""
-                />
-             
-                  <DonutChart />
-                
-              </div>
-              <Link to="/Task" className="px-6">
-                <button
-                  className="w-60 py-1 border text-lg rounded mt-5"
-                  style={{
-                    fontFamily: "jockey",
-                    borderColor: "#768592",
-                    color: "#858585",
-                  }}
+            {state && (
+              <div className="text-center space-y-6">
+                <p
+                  className="text-7xl "
+                  style={{ color: "#75C9A8", fontFamily: "jockey" }}
                 >
-                  View your tasks
-                </button>
-              </Link>
-            </div>
+                  {parseInt((100 / (done + inprogress + todo)) * done)}%
+                </p>
+                <p
+                  className="text-xl"
+                  style={{ color: "#B5B7B9", fontFamily: "jockey" }}
+                >
+                  Completed Tasks
+                </p>
+
+                <div className=" px-4 mx-auto relative w-[80%]">
+                  <img
+                    className="absolute w-10 right-0 bottom-0 left-0 top-0 m-auto"
+                    src={Plus}
+                    alt=""
+                  />
+
+                  <DonutChart todo={todo} inprogress={inprogress} done={done} />
+                </div>
+                <Link to="/Task" className="px-6">
+                  <button
+                    className="w-60 py-1 border text-lg rounded mt-5"
+                    style={{
+                      fontFamily: "jockey",
+                      borderColor: "#768592",
+                      color: "#858585",
+                    }}
+                  >
+                    View your tasks
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       ) : (
