@@ -173,7 +173,7 @@ function Dashboard(props) {
           />
           <p style={{ fontFamily: "jura" }}>{todo}</p>
         </div>
-        <img src={Minus} alt="" />
+        <Link to="/Todo"><img src={Minus} alt="" /></Link>
       </div>
     );
   }
