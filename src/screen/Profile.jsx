@@ -34,7 +34,7 @@ export default function Profile() {
 
   function UpdateUser() {
     if (confirm("Are you sure update profile")) {
-      if (images) {
+      if (images.length != 0) {
         const file = images[0]; // the file object of the image
         const reader = new FileReader();
         let name = images[0].name;

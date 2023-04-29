@@ -245,7 +245,9 @@ function Project_task() {
       index : obj.index
 
     }).then((res) =>{
-      console.log(res.data)
+      if(res.data == 'successfully'){
+        window.location.replace('/task');
+      }
     })
     .catch((err)=>{
       console.log(err)
