@@ -78,10 +78,9 @@ function Dashboard(props) {
       .post(`${path}/user`, { id: localStorage.getItem("id") })
       .then((res) => {
         setUser(res.data);
-        if (res.data.focus != undefined) {
+        if (Object.keys(res.data.focus).length) {
           GetTask(res.data.focus.index, res.data.focus.project);
         } else {
-          console.log(1);
           setTimeout(() => {
             setLoading(true);
           }, 400);
@@ -102,14 +101,14 @@ function Dashboard(props) {
         let count = 0;
         if (Object.keys(res.data).length != 0) {
           setMyTodo(res.data.userTodo);
-          setAllStatus(res.data.userTodo.length)
+          setAllStatus(res.data.userTodo.length);
           res.data.userTodo.forEach((element) => {
             if (!element.status) {
               count = count + 1;
             }
           });
-          localStorage.setItem('incom', count)
-          localStorage.setItem('allstatus', res.data.userTodo.length)
+          localStorage.setItem("incom", count);
+          localStorage.setItem("allstatus", res.data.userTodo.length);
           setInComplete(count);
         }
       })
@@ -173,7 +172,9 @@ function Dashboard(props) {
           />
           <p style={{ fontFamily: "jura" }}>{todo}</p>
         </div>
-        <Link to="/Todo"><img src={Minus} alt="" /></Link>
+        <Link to="/Todo">
+          <img src={Minus} alt="" />
+        </Link>
       </div>
     );
   }
@@ -204,7 +205,7 @@ function Dashboard(props) {
           <NavigationBar />
           {/* // Todo Body */}
           <div className="col-span-4 px-4 h-full">
-            <NavFile status={inComplete} allstatus={allStatus}/>
+            <NavFile status={inComplete} allstatus={allStatus} />
             {/* graph */}
             <div
               className=" h-[35%] sm:h-[30%] rounded-2xl relative"
@@ -218,7 +219,10 @@ function Dashboard(props) {
                         className="text-7xl"
                         style={{ color: "#75C9A8", fontFamily: "jockey" }}
                       >
-                        {parseInt((100 / (done + inprogress + todo)) * done)}%
+                        {done + inprogress + todo == 0
+                          ? 0
+                          : parseInt((100 / (done + inprogress + todo)) * done)}
+                        %
                       </p>
                       <p
                         className="text-xl"

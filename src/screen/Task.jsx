@@ -100,7 +100,7 @@ function UpdateFocus(project, index) {
 }
 
 function Task() {
-  const [allTask, setAllTask] = useState();
+  const [allTask, setAllTask] = useState([]);
   const [modal, setModal] = useState(false);
   const [date, setDate] = useState("");
   const dateInputRef = useRef(null);
@@ -171,7 +171,12 @@ function Task() {
         }
       )
       .then((res) => {
-        setAllTask(res.data);
+        if(Object.keys(res.data).length == 0){
+          
+        }
+        else{
+          setAllTask(res.data);
+        }
         setTimeout(() => {
           setLoad(true);
         }, 400);

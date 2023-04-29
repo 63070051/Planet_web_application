@@ -87,7 +87,7 @@ function TodoList() {
       .post(`${path}/user`, { id: localStorage.getItem("id") })
       .then((res) => {
         setUser(res.data);
-        if (res.data.focus != undefined) {
+        if (Object.keys(res.data.focus).length) {
           GetTask(res.data.focus.index, res.data.focus.project);
         } else {
           setTimeout(() => {
@@ -323,7 +323,6 @@ function TodoList() {
         console.log(err);
       });
   }
-
   return (
     <div className="select-none">
       {/* // Body Grid */}
@@ -491,7 +490,10 @@ function TodoList() {
                   className="text-7xl "
                   style={{ color: "#75C9A8", fontFamily: "jockey" }}
                 >
-                  {parseInt((100 / (done + inprogress + todo)) * done)}%
+                  {done + inprogress + todo == 0
+                    ? 0
+                    : parseInt((100 / (done + inprogress + todo)) * done)}
+                  %
                 </p>
                 <p
                   className="text-xl"
